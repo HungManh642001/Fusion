@@ -1,0 +1,7 @@
+datasets/scene01/*.mp4
+docs/samples/*.mp4
+output/*.mp4
+__pycache__/
+*.pyc
+.pytest_cache/
+.superpowers/
