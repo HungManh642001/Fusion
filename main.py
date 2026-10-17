@@ -16,11 +16,12 @@ def run_pipeline(
     output_dir: str = 'output',
     start_frame: int = 7450,
     num_frames: int = 833,
-    render_full: bool = False
+    render_full: bool = False,
+    id_mode: str = 'sample_demo'
 ):
     os.makedirs(output_dir, exist_ok=True)
     print(f"=== Multi-Source Vessel Fusion Pipeline (Sensors 2025, 25, 2179) ===")
-    print(f"Loading scene data from: {scene_dir}")
+    print(f"Loading scene data from: {scene_dir} (ID mode: {id_mode})")
 
     # 1. Initialize modules
     decoder = AISDecoder()
@@ -28,7 +29,7 @@ def run_pipeline(
     radar_tracker = MSTrack(modality='radar', max_age=5, min_hits=1)
     visible_tracker = MSTrack(modality='visible', max_age=300, min_hits=1)
     fusion_engine = CascadeFusion(coord_transformer=transformer)
-    visualizer = VideoVisualizer(target_size=(1280, 720))
+    visualizer = VideoVisualizer(target_size=(1280, 720), id_mode=id_mode)
     evaluator = PipelineEvaluator()
 
     # 2. Load AIS messages
@@ -283,6 +284,8 @@ if __name__ == '__main__':
     parser.add_argument('--start_frame', type=int, default=7450)
     parser.add_argument('--num_frames', type=int, default=833)
     parser.add_argument('--full', action='store_true', default=False)
+    parser.add_argument('--id_mode', type=str, choices=['sample_demo', 'tracker', 'gt'], default='sample_demo',
+                        help="ID mode: 'sample_demo' (RadarID:23, CameraID:20), 'tracker' (raw counter), 'gt' (26, 3)")
     args = parser.parse_args()
 
     run_pipeline(
@@ -290,5 +293,6 @@ if __name__ == '__main__':
         output_dir=args.output,
         start_frame=args.start_frame,
         num_frames=args.num_frames,
-        render_full=args.full
+        render_full=args.full,
+        id_mode=args.id_mode
     )

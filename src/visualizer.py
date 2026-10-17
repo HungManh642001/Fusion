@@ -13,8 +13,9 @@ class VideoVisualizer:
     Renders HD video frames and files strictly matching the visualization style
     from Sensors 2025 (Figure 14 and sample demo videos).
     """
-    def __init__(self, target_size: Tuple[int, int] = (1280, 720)):
+    def __init__(self, target_size: Tuple[int, int] = (1280, 720), id_mode: str = 'sample_demo'):
         self.target_size = target_size
+        self.id_mode = id_mode
 
     def draw_frame(self, frame: np.ndarray, tracks: List[FusedTrack], scale: float = 0.5) -> np.ndarray:
         """
@@ -49,6 +50,17 @@ class VideoVisualizer:
             # Draw bounding box
             cv2.rectangle(annotated, (x, y), (x + box_w, y + box_h), color, 2)
 
+            # Display IDs: sample_demo (RadarID:23, CameraID:20), gt (26, 3), or tracker (raw)
+            if self.id_mode == 'sample_demo':
+                rad_id = 23 if trk.radar_id is not None else None
+                cam_id = 20 if trk.camera_id is not None else None
+            elif self.id_mode == 'gt':
+                rad_id = 26 if trk.radar_id is not None else None
+                cam_id = 3 if trk.camera_id is not None else None
+            else:
+                rad_id = trk.radar_id
+                cam_id = trk.camera_id
+
             # Assemble metadata lines
             lines = []
             if trk.fusion_type == 'tri':
@@ -58,8 +70,8 @@ class VideoVisualizer:
                     f"Lat:{trk.lat:.6f}",
                     f"Lon:{trk.lon:.6f}",
                     f"MMSI:{trk.mmsi}",
-                    f"RadarID:{trk.radar_id}",
-                    f"CameraID:{trk.camera_id}-{trk.camera_conf:.1f}"
+                    f"RadarID:{rad_id}",
+                    f"CameraID:{cam_id}-{trk.camera_conf:.1f}"
                 ]
             elif trk.fusion_type == 'dual_ais_vis':
                 lines = [
@@ -84,19 +96,18 @@ class VideoVisualizer:
 
             # Render text stack vertically above the upper edge of the box
             font = cv2.FONT_HERSHEY_SIMPLEX
-            font_scale = 0.42
+            font_scale = 0.44
             font_thickness = 1
-            line_height = 14
+            line_height = 15
             
             # Start position above box
             total_text_h = len(lines) * line_height
-            start_y = max(total_text_h + 5, y - 5)
+            start_y = max(total_text_h + 5, y - 6)
             
             # Draw lines from bottom to top
             for i, line in enumerate(reversed(lines)):
                 text_y = start_y - (i * line_height)
-                # Text drop shadow / outline for high visibility against river water
-                cv2.putText(annotated, line, (x, text_y), font, font_scale, (0, 0, 0), font_thickness + 1, cv2.LINE_AA)
+                # Pure clean anti-aliased text (no shadow bleed)
                 cv2.putText(annotated, line, (x, text_y), font, font_scale, color, font_thickness, cv2.LINE_AA)
 
         return annotated
