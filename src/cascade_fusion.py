@@ -25,6 +25,8 @@ _LSA_FUNC = cast(
     scipy.optimize.linear_sum_assignment,
 )
 
+INFTY_COST: float = 1e5
+
 
 @dataclass(frozen=True)
 class TrajectoryState:
@@ -112,7 +114,7 @@ class CascadeFusion:
         s2: TrajectoryState,
         *,
         k: float = 0.5,
-        l_limit: int = 100,
+        l_limit: int = 10000,
         t_limit: int = 60000,
     ) -> float:
         """Tính chi phí liên kết động học giữa hai trạng thái quỹ đạo (Eq. 12 & 13).
@@ -130,7 +132,7 @@ class CascadeFusion:
         len_diff = abs(s1.length - s2.length)
         time_diff = abs(s1.entry_time - s2.entry_time)
         if len_diff > l_limit or time_diff > t_limit:
-            return float("inf")
+            return INFTY_COST
 
         dist = math.hypot(s1.x - s2.x, s1.y - s2.y)
         v1_mag = math.hypot(s1.vx, s1.vy)
@@ -154,6 +156,8 @@ class CascadeFusion:
             cos_dist = 1.0
 
         cost = (k * dist + (1.0 - k) * diff_az_norm + diff_v) / cos_dist
+        if math.isnan(cost) or math.isinf(cost):
+            return INFTY_COST
         return float(cost)
 
     def fuse(
@@ -391,7 +395,10 @@ class CascadeFusion:
                     c -= 0.5
                 cost_ar[i, j] = np.float32(c)
 
-        row_ind_raw, col_ind_raw = _LSA_FUNC(cost_ar)
+        safe_cost_ar = np.nan_to_num(
+            cost_ar, nan=INFTY_COST, posinf=INFTY_COST, neginf=INFTY_COST
+        )
+        row_ind_raw, col_ind_raw = _LSA_FUNC(safe_cost_ar)
         for r, c in zip(row_ind_raw, col_ind_raw, strict=False):
             r_idx, c_idx = int(r), int(c)
             if float(cost_ar[r_idx, c_idx]) < self.match_cost_thresh:
@@ -442,7 +449,10 @@ class CascadeFusion:
                 dist_y = abs(box_cy - gate_cy) / 1440.0
                 cost_rv[i, j] = np.float32(0.2 * dist_x + 0.8 * dist_y)
 
-        row_ind_raw, col_ind_raw = _LSA_FUNC(cost_rv)
+        safe_cost_rv = np.nan_to_num(
+            cost_rv, nan=INFTY_COST, posinf=INFTY_COST, neginf=INFTY_COST
+        )
+        row_ind_raw, col_ind_raw = _LSA_FUNC(safe_cost_rv)
         for r, c in zip(row_ind_raw, col_ind_raw, strict=False):
             r_idx, c_idx = int(r), int(c)
             if float(cost_rv[r_idx, c_idx]) < 0.6:

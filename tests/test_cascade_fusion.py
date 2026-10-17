@@ -28,6 +28,23 @@ def test_compute_cost_with_opposing_headings_yields_higher_cost() -> None:
     assert cost_opp_heading > cost_same_heading * 5.0
 
 
+def test_compute_cost_with_exceeded_limits_returns_penalty() -> None:
+    # Arrange
+    fusion = CascadeFusion()
+    s1 = TrajectoryState(
+        x=0.5, y=0.5, vx=1.0, vy=0.0, azimuth=0.0, entry_time=1000, length=10
+    )
+    s2 = TrajectoryState(
+        x=0.51, y=0.51, vx=1.0, vy=0.0, azimuth=0.02, entry_time=1000, length=20000
+    )
+
+    # Act
+    cost = fusion.compute_cost(s1, s2, l_limit=100)
+
+    # Assert
+    assert cost >= 1e5
+
+
 def test_fuse_with_three_concordant_sources_yields_tri_modal_track() -> None:
     # Arrange
     fusion = CascadeFusion()
