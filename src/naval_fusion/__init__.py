@@ -5,6 +5,7 @@ bù chuyển động tàu mẹ trong hệ tọa độ Piren NED và xử lý c�
 (Radar, LiDAR, IR, EO).
 """
 
+from src.naval_fusion.loader import AutoferryLoader
 from src.naval_fusion.models import (
     Detection,
     EvaluationMetrics,
@@ -14,6 +15,7 @@ from src.naval_fusion.models import (
 )
 
 __all__ = [
+    "AutoferryLoader",
     "Detection",
     "EvaluationMetrics",
     "OwnshipState",
