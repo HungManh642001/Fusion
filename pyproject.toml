@@ -1,0 +1,67 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vessel-fusion"
+version = "0.1.0"
+description = "Multi-Source Inland Waterway Vessel Perception and Trajectory Fusion"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "numpy",
+    "pandas",
+    "opencv-python",
+    "scipy",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "ruff",
+    "pyright",
+    "bandit",
+]
+
+[tool.ruff]
+line-length = 88
+indent-width = 4
+target-version = "py311"
+
+[tool.ruff.lint]
+select = [
+    "E", "W", "F", "I", "N", "D", "UP", "B", "SIM", "S", "ASYNC", "RUF"
+]
+ignore = [
+    "D400",  # Summary line doesn't need period per project standards
+    "D415",  # First line punctuation
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101", "D", "S105", "S106"]
+"main.py" = ["T201"]
+
+[tool.pyright]
+typeCheckingMode = "strict"
+pythonVersion = "3.11"
+extraPaths = ["."]
+reportUnknownMemberType = "warning"
+reportUntypedBaseClass = "warning"
+reportUnnecessaryTypeIgnoreComment = "warning"
+reportMissingTypeStubs = "none"
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+markers = [
+    "unit: Unit tests",
+    "integration: Integration tests",
+    "e2e: End-to-end tests",
+    "slow: Slow tests",
+]
+
+[tool.bandit]
+skips = ["B101"]

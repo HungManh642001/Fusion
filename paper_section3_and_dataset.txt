@@ -1,0 +1,686 @@
+=== PAGE 6 ===
+Sensors 2025, 25, 2179 6 of 28
+3. Methodology
+The proposed multi-source data fusion framework is illustrated in Figure 1, consisting
+of two main components. Initially, in the multi-stage detection and tracking module, the
+multi-source data are processed in a layered way to obtain the vessel detection and tracking
+results of each data type. Subsequently, the module utilizes the feedback fusion result to
+identify missing detection and generate tracking gates, within which the missing targets in
+single-modality layered detection are refined. Then, in the multi-source trajectories fusion
+module, the kinematic features of the multi-source trajectory are aligned. Unified trajectory
+features in a common coordinate system are extracted to construct the association cost
+matrix, aiming to solve the optimal association among multi-source trajectories. Then,
+through the cascade association matching method, the vessel trajectories will become fused
+and simultaneously contain the information of MMSI, radar tracking ID, visible tracking
+ID, latitude, longitude, speed over ground (SOG), and course over ground (COG). The
+fusion results are output as the final perception results and feedback into the multi-stage
+detection and tracking module, forming a feedback loop. In order to verify the performance
+of our algorithm in real scenes, we construct the first multi-weather complex scenes multi-
+source heterogeneous dataset from the Yangtze River, hoping to provide a benchmark for
+subsequent research on vessel multi-source sensing methods.
+Figure 1. The proposed multi-source data fusion framework for surface vessels detection and tracking,
+consisting of a multi-stage detection and tracking module and multi-source trajectories fusion module.
+3.1. Multi-Stage Detection and T racking Method
+Under the TBD tracking framework, missing detections during the detection process
+can negatively impact the tracking performance. Existing detection algorithms often expe-
+rience performance degradation and occur missing detections when faced with scenarios
+involving small-scale objects, occlusions, or environmental challenges like rain, fog, and
+blur. While some studies have improved detection algorithms to address these specific
+scenarios, the causes of missing detections in the real world are often diverse and the
+improvements for specific scenario may struggle to handle the complex environments
+effectively. Therefore, we propose a multi-stage detection and tracking method (named
+MSTrack) utilizing multi-source fusion data as illustrated in Figure 2. In this method, we
+shift the focus away from identifying the specific causes of missing detections. Instead, we
+leverage historical multi-source fusion data to determine whether missing detections have
+occurred in the layered detection and tracking processes. Complementary trajectory data
+
+=== PAGE 7 ===
+Sensors 2025, 25, 2179 7 of 28
+from other sensors within the fusion results are then utilized to realize the refine of tracking
+for missing targets in single-modality perception.
+Figure 2. The flowchart of the multi-stage detection and tracking method. The history fusion result feed-
+back from the multi-source trajectories fusion module contains the MMSI, radar ID, and visible ID of the
+successfully fused target. By querying the fusion data of the previous and the layered detection and track-
+ing results at present, it is determined whether single-modality data have missing detection. Re-detection
+and tracking with the help of multi-sources complementary data will update the missing trajectories.
+3.1.1. Layered Detection and Tracking
+In our method, a layered approach to detection and tracking for each data type serves
+as the initial step. For AIS data, since the MMSI provides the identity information of the
+vessel, tracking can be realized by simply preprocessing, such as outliers removal, area
+restrictions, and life cycles management. For radar and visible images, we select YOLOv8
+as the base detection network to ensure rapid and accurate vessel detection, with additional
+fine-tuning to accommodate the unique characteristics of the data. First, because radar
+images typically contain small-sized targets, we add an extra small-object detection head
+to the network to leverage lower-level feature maps, improving the network’s sensitivity
+to small targets in radar imagery. Then, since AIS data already include vessel class infor-
+mation, we opt for single-class detection in both radar and visible images, removing the
+classification loss from the network’s loss function to focus the model more on bounding
+box regression.
+Once detection results are obtained, we adopt a TBD framework for vessel tracking,
+which allows for flexible integration of future method improvements. For radar image
+targets, which lack stable and distinctive image features, we use the classic simple online
+and real-time tracking(SORT) [37] algorithm as the baseline. For visible targets, however,
+we use DeepSORT [38] as the baseline tracking method, as it leverages the rich appearance
+features in visible images to improve tracking stability. The tracking results can be written
+as follows:
+
+
+
+Tais =
+
+Tais
+1 , Tais
+2 , . . . ,Tais
+i
+	
+Trad =
+n
+Trad
+1 , Trad
+2 , . . . ,Trad
+j
+o
+Tvis =
+
+Tvis
+1 , Tvis
+2 , . . . ,Tvis
+k
+	
+(1)
+
+=== PAGE 8 ===
+Sensors 2025, 25, 2179 8 of 28
+whereTais,Trad andTvis represent the sets of tracking trajectories for AIS, radar, and visible,
+respectively. Specifically,Tais
+i denotes the i-th AIS trajectory, whileTrad
+j and Tvis
+k correspond
+to the j-th radar trajectory and the k-th visible trajectory.
+3.1.2. Missing Detection Identify
+First, in layered detection and tracking, there are three possible outcomes for track-
+ing association in each cycle: matched, unmatched detection, and unmatched trajectory.
+Unmatched trajectory refers to the failure to find an associated detection for a historical
+trajectory in the current frame. This can indicate that the tracked target has moved out of
+the perception range, marking the end of the tracking trajectory, or it may be caused by a
+missing detection.
+To distinguish the above cases, we use historical multi-source fusion data to identify
+the unmatched trajectories, find the missing detection during the tracking process. We first
+query the ID of the unmatched trajectory from the fusion results of the previous time step. If
+the trajectory is found in the fusion results and is associated with other sensors trajectories,
+it indicates that the trajectory has the corresponding multi-sources complementary data.
+We then search for the corresponding multi-sources trajectory in the current tracking results.
+If the corresponding trajectory is successfully matched and updated, it confirms that the
+target is still within the perception range, and mismatch is indeed caused by a missing
+detection in the single-modality data. The pseudo code of the identify process is shown in
+Algorithm 1, and the unmatched visible trajectoryTUVT and unmatched radar trajectory
+TURT with missing detection will be output.
+Algorithm 1: Missing detection identification.
+Data:Trad ,Tvis,F:An ID set of AIS, visible and radar fusion result at previous moment
+Result:TURT :unmatched radar trajectory with missing detection;TUVT :unmatched visible trajectory
+with missing detection
+1 initialization;
+2 for TID inTrad andTvis do
+3 if TID is unmatched then
+4 Add Trad
+ID toTURT ;
+5 Add Tvis
+ID toTUVT ;
+6 end
+7 end
+8 for TID inTURT orTUVT do
+9 if Trad
+ID or T vis
+ID inF then
+10 get associated Tvis
+ass for Trad
+ID ;
+11 or get associated Trad
+ass for Tvis
+ID ;
+12 if Tvis
+ass inTvis and T vis
+ass is matched then
+13 exist missing detection ;
+14 else
+15 Remove Trad
+ID fromTURT ;
+16 end
+17 if Trad
+ass inTrad and T rad
+corr is matched then
+18 exist missing detection ;
+19 else
+20 Remove Tvis
+ID fromTUVT ;
+21 end
+22 else
+23 Remove TID fromTURT orTUVT ;
+24 end
+25 end
+
+=== PAGE 9 ===
+Sensors 2025, 25, 2179 9 of 28
+3.1.3. Feedback-Based Radar Tracking Refine
+Upon confirming the missing detection for unmatched trajectory, a feedback-based
+radar tracking refine is applied, utilizing multi-source complementary data. We first
+generate a box-tracking gate for the missing target, serving as the region proposal. This
+helps reduce the computational load and prevents the redundant detection of the same
+target by restricting detection to objects within the tracking gate. Observing the missing
+detections during the radar tracking process, these issues primarily arise when the echo
+signal of the target suddenly diminishes on the image. Therefore, using the predicted
+bounding box generated by the Kalman filter in the tracking process as the tracking gate
+effectively covers the potential area of the missing target:
+Bbox rad
+gate|t = A· Bbox rad
+det|t−1 + B· µrad
+t−1 (2)
+where Bbox rad
+gate|t is the tracking gate of the missing detection at present; Bbox rad
+det|t−1 denotes
+the radar tracking box before missing; A and B are the state transition matrix and control
+matrix; and µrad
+t−1 denote the control input.
+Subsequently, a re-detection process is performed on the targets within the tracking
+gate. For the radar targets, substantial clutter may still exist within the tracking gate. To
+address this, we incorporate AIS complementary data as an auxiliary measure. The AIS
+target’s latitude and longitude are projected to the radar image coordinates to check if any
+AIS targets are present within the tracking gate.
+Figure 3 shows a typical radar scene of re-detection. For unmatched trajectories, a
+box tracking gate is generated by one-step prediction of the Kalman filter. If no AIS points
+are found within the gate, it is assumed that the gate contains only clutter. While if there
+exists an AIS point within the gate, this point will be used as a seed point for extracting the
+connected domain extraction of radar echoes within the gate, and the bounding box of the
+connected domain will be used as the re-detection value:
+(
+C ={(x, y)| (x, y)∈ N(S)}, P(x,y) > Tp
+Bbox rad
+det = [xmin, ymin , xmax, ymax ], (xi, yi)∈ C
+(3)
+where S represents the seed point, N(S) denotes the neighborhood pixels of the seed
+point S, and P(x,y) indicates the pixel value at coordinates (x, y). Tp is the pixel threshold,
+where pixels exceeding this threshold are identified as target points. C denotes the target’s
+connected region, and Bbox rad
+det represents the bounding box of the connected region C,
+which will be used to update and refine the unmatched trajectory.
+3.1.4. Feedback-Based Visible Tracking Refine
+For the refinement of visible tracking, the process can also be divided into two steps:
+tracking gate generation and the re-detection of missing target. However, due to the high
+refresh rate of visible data and the different causes of missing detections compared to radar,
+we adopt a new strategy to refine the tracking results.
+In the process of visible tracking, environmental factors such as occlusion, rain, or
+fog often cause a decrease in the detection confidence score. As interference intensifies,
+this ultimately results in detection miss. Figure 4 illustrates scenarios where the target
+confidence is affected by environmental disturbances. While some missing target can be
+recovered by improving the detection algorithm, scenarios with complete occlusion, as
+shown in Figure 4b, make it difficult to retrieve positional information through detection
+alone. As for Figure 4c, the blur caused by rain makes it difficult to obtain the accurate
+boundary of the target, and the appearance feature of the target changes greatly, which
+will cause interference to the follow-up tracking. Therefore, to achieve the re-detection of
+
+=== PAGE 10 ===
+Sensors 2025, 25, 2179 10 of 28
+missing detection under all scenarios and ensure the stability of detection, we use kinematic
+prediction combined with a tracking gate to obtain the bounding box for missing targets.
+Unmatched 
+trajectory
+Matched 
+trajectory
+Unmatched 
+trajectory
+Tracking gate
+AIS point
+Target
+clutter 
+Detection
+Tracking gate
+Figure 3. A typical radar scene of re-detection. The AIS data will be used as seed points to help
+complete the re-detection of radar echoes inside the tracking gate, avoiding clutter interference.
+(a) Normal
+(b) Occlusion scene
+(c) Rain scene
+Figure 4. Reduced confidence and missing detection caused by environmental interference. In a normal
+scene, detection boxes are stable and reliable, but environmental interference causes the target to be unable
+to recognize and the appearance features change dramatically , which will affect the tracking results.
+Initially, to obtain more accurate prediction, we further categorize missing detection
+trajectories and apply different prediction strategies. We select data from the most recent n
+time steps of each visible trajectory to calculate its mean confidence score:
+mcon f = 1
+n
+t
+∑
+i=t−n+1
+con fi (4)
+where t denotes the latest time, andcon fi represents the confidence score of the detection box at
+time i. If mcon f is greater than the thresholdTcon f, the trajectory is considered high confidence;
+otherwise, it is classified as low confidence. The thresholdTcon f is set at 0.8.
+
+=== PAGE 11 ===
+Sensors 2025, 25, 2179 11 of 28
+For high-confidence missing detection trajectories, we use the latest data as the predic-
+tion starting point, keeping the prediction step as short as possible to ensure the accuracy.
+As for low-confidence trajectories, the change of confidence means that the bounding box
+and appearance feature are not reliable in near-stage. We trace back through the historical
+trajectory to find the first high-confidence bounding box and perform a linear extrapolation
+from that starting point to obtain the current predicted value. In this way, we have a more
+stable predicted bounding box. The prediction’s appearance feature will also inherit from
+the starting point, trying to avoid the appearance feature being affected by environmental
+factors. So the visible re-detection value can be gained as
+
+
+
+Bbox vis
+det =
+
+
+xs
+ys
+ws
+hs
+
+
++
+
+
+˙xs
+˙ys
+˙ws
+˙hs
+
+
+· (tdet− ts)
+ζdet = ζs
+(5)
+where xs and ys represent the coordinates in the top left corner of the starting point detection
+box; ws and hs are the height and width of the box; ts denotes the timestamp of the starting
+point; tdet is the timestamp of the re-detection; and ζ indicates the appearance features of
+the detection result.
+The re-detection result Bbox vis
+det based on kinematic equations extrapolation effectively
+mitigates the divergence issues commonly encountered in multi-step Kalman predictions.
+Since the movement of vessels typically follows a uniform and gradually varying pattern,
+the accuracy of linear extrapolation is generally acceptable in most scenarios. However, to
+further ensure the reliability of re-detection, we leverage multi-source complementary data
+to generate tracking gate for the missing target and calibrate the re-detection result. We
+first project the bounding box of the corresponding radar target onto the visible image to
+serve as the tracking gate:
+Bbox vis
+gate|t = F· Bbox rad
+det|t (6)
+where Bbox vis
+gate|t and Bbox rad
+det|t denote the tracking gate of missing detection and correspond-
+ing radar tracking box, respectively; F is the projection matrix from radar image coordinates
+to visible image coordinates, which are detailed in Section 3.2.1.
+If the predicted value Bbox vis
+det falls within the tracking gate Bbox vis
+gate , it confirms the
+presence of missing detection, allowing us to use Bbox det as the re-detection and tracking
+result. The criteria can be given by
+Tgate = max ( xgate
+xdet
+, ygate
+ydet
+, wdet
+wgate
+, hdet
+hgate
+) (7)
+where xdet, ydet and wdet, hdet denote the state of Bbox vis
+det, and the variable with the gate
+subscript is the Bbox vis
+gate state; a criterion value Tgate greater than 1 means that Bbox vis
+det is
+within the tracking gate. If Bbox vis
+det falls outside the tracking gate, we assume that the
+target has either disappeared or the prediction error is too high, and we discard that
+detection result.
+3.2. Multi-Source T rajectories Fusion
+In the proposed fusion framework, the trajectories obtained from the detection and
+tracking will be fused in the multi-source trajectories fusion module. Figure 5 provides a
+detailed flowchart within the module. The kinematic feature alignment step establishes
+
+=== PAGE 12 ===
+Sensors 2025, 25, 2179 12 of 28
+temporal and spatial alignment relationships between multi-source trajectories, ensuring
+a unified metric for subsequent trajectory similarity calculations. For association, we
+treat the multi-source trajectory association task as a bipartite matching problem. An
+association cost matrix is constructed using the kinematic features of the trajectories,
+and the Hungarian algorithm is employed to find the optimal assignment. Additionally,
+we design a cascaded association matching method, which sequentially associates AIS,
+radar, and visible trajectories. This method addresses the challenges posed by alignment
+inaccuracies in real-world scenes. It also ensures that the fusion module can still associate
+and fuse trajectories data in cases where one trajectory source is missing, enhancing the
+robustness of the fusion process.
+Figure 5. The flowchart of multi-source trajectory fusion. We use the kinematics feature to measure
+trajectory similarity between multi-source data. And a cascade association matching method is
+specially designed to reduce the number of trajectories that need to be associated in a lower-precision
+coordinate system by associating the high-precision aligned data first.
+3.2.1. Kinematics Features Alignment
+Due to the varying sampling frequencies and spatial coordinates used by different
+vessel perception devices, kinematics features alignment across AIS, radar, and visible
+images is essential to measure the similarity between multiple source trajectories. AIS data
+are characterized by irregular update frequencies and high update delays, typically ranging
+from 10 s to several minutes. Radar images, constrained by the physical limitations of the
+antenna scanning speed, generally have an update frequency of 2 s. Visible images, on the
+other hand, typically refresh at speeds of 25 Hz or higher. Based on these characteristics, we
+choose to align both AIS and visible images to the radar timestamps. For AIS data, which
+include information on the vessel’s latitude, longitude, SOG, and COG, we directly apply
+kinematic equations to perform linear extrapolation, determining the vessel’s position at
+the radar timestamp:
+latrt = latlast + 180· SOG· ∆t· cos(COGrad)
+π· R (8)
+
+=== PAGE 13 ===
+Sensors 2025, 25, 2179 13 of 28
+lonrt = lonlast + 180· SOG· ∆t· cos(COGrad)
+π· R· cos(π· latlast /180) (9)
+where latrt and lonrt denote the latitude and longitude of the AIS extrapolation on the
+radar timestamp. latlast and lonlast are the latitude and longitude of the last AIS data. ∆t
+represents the extrapolation time. R is the radius of the Earth.
+Regarding visible images, since vessel movement can be considered a nearly uniform,
+slow process and the high refresh rate of visible images results in minimal changes between
+consecutive frames, we simplify the alignment process by selecting the visible image closest
+to the radar update timestamp as the synchronized data. All data are fused at the radar
+update timestamps. For non-fusion timestamps in visible data, the detection and tracking
+results are updated in real time, inheriting the corresponding sensor information from the last
+fusion timestamp.
+Due to the differences in data sources and imaging principles, AIS, radar images,
+and visible images use different coordinate systems. AIS data are represented in latitude
+and longitude coordinates, while radar and visible light images are expressed in pixel
+coordinates. Furthermore, radar images can be considered bird’s-eye views in geodetic
+coordinates, where visible images are generated through projection transformations based
+on the pinhole camera model. As a result, longitude and latitude coordinates can be
+transformed into radar pixels through affine transformations:
+
+
+xr
+yr
+1
+
+ = Z
+"
+R T
+0T 1
+#
+
+lon
+lat
+1
+
+ (10)
+where xr and yr represent the coordinates of longitude and latitude point on the radar
+image; Z are rotation and transfer matrices; R and T are the rotation matrix and transfer
+matrix, respectively.
+For visible images, we assume the camera to be an ideal pinhole imaging model, and
+transform the longitude and latitude coordinates as follows:
+
+
+xv
+yv
+1
+
+ = Z
+
+
+f
+dx 0 u0 0
+0 f
+dy v0 0
+0 0 1 0
+
+
+"
+R T
+0T 1
+#
+
+
+lon
+lat
+h
+1
+
+
+= ZM
+"
+R T
+0T 1
+#
+
+
+lon
+lat
+1
+1
+
+
+(11)
+where M denote the intrinsic matrix of the visible camera, f in the matrix is the focal
+distance of the camera, dx and dy represent the physical size of each pixel; u0 and v0 are the
+coordinates of the central pixel of the image; and h represents the position height of the
+target since the vessels all navigate on the water surface. h is set to be constant.
+3.2.2. Association Cost Calculation
+In this study, we take the association between multi-source trajectories as a bipartite
+matching problem and adopt the Hungarian algorithm to determine the optimal matches.
+The key aspect of this process lies in the construction of the association cost matrix. Ideally,
+this can be achieved by aligning all data into a common coordinate system and building the
+cost matrix based on positional and distance information between targets. However, due to
+the presence of systematic errors and measurement errors, a cost matrix relying solely on
+
+=== PAGE 14 ===
+Sensors 2025, 25, 2179 14 of 28
+positional information often fails to meet the accuracy requirements for association and
+fusion in real-world complex scenes.
+Therefore, in order to better measure the association cost between multi-source tra-
+jectories, we use kinematic parameters S = (x, y,⃗v, a, t, l) to comprehensively describe the
+target state, where x, y denotes the target’s position coordinates, ⃗v represents the target’s
+velocity vector, a is the target’s azimuth, t is the start time when the target enters the fusion
+range, and l is the trajectory length. During association and fusion, data from two sensors
+are first associated, with the association cost calculated as follows:
+c(A,B)
+i,j =
+
+
+
++∞, i f
+li− lj
+ > llimit or
+ti− tj
+ > tlimit
+k·
+√
+(xi−xj)2+(yi−yj)2+(1−k)|ai−aj|+||⃗vi|−|⃗vj||
+cos(⃗vi,⃗vj) , otherwise
+(12)
+The formula defines c(A,B)
+i,j as the association cost between the i-th trajectory from
+sensor A and the j-th trajectory from sensor B. If the time difference or trajectory length
+difference between the two trajectories exceeds a predefined threshold, they are deemed
+unlikely to be associated, and the association cost is set to infinity. The parameters x, y,⃗v
+and a are normalized during the cost calculation. The weight coefficient k is set to a default
+value of 0.5. The term cos(⃗vi, ⃗vj) represents the cosine distance of the velocity vectors:
+cos(⃗vi, ⃗vj) =
+ 
+⃗vi· ⃗vi
+|⃗vi|·
+⃗vj
+ + 1 + ε
+!
+/2∈ (0, 1] (13)
+where ε is a small constant added to prevent the cosine distance from becoming zero in
+the denominator. As the angle between two velocity vectors is larger, the cosine distance
+approaches zero, leading to a higher association cost. This effectively distinguishes targets
+that are spatially close but have differing headings.
+3.2.3. Cascade Association Matching
+Based on Equation (12), the association cost matrix between multi-source trajectories
+can be constructed. However, since the fusion module involves multiple coordinate systems,
+the association cost across different coordinate systems may vary due to the alignment
+accuracy. For instance, AIS targets can achieve relatively precise alignment with radar image
+coordinates through affine transformation, but in visible image coordinates, AIS target
+alignment can exhibit large errors due to the lack of depth information and simplifications
+in the camera model. Additionally, in real-world scenes, issues such as missing sensor or
+trajectories may arise, such as some vessels not activating their AIS. The association and
+fusion method how to perform under such circumstances is also a critical problem.
+To solve the problems mentioned above, we propose a cascade association matching
+method to achieve accurate and robust fusion among the AIS, radar, and visible trajectories.
+The cascading association matching method is also shown in Figure 5. In the cascade
+association matching method, it first establishes pairwise associations between the AIS and
+radar, as well as between the radar and visible, trajectories. Since visible images lack depth
+information but can accurately capture the target’s azimuth angle, the weight coefficient
+k is set to 0.2 during the radar and visible matching process. For the unassociated AIS
+trajectories(TU AA) and visible trajectories(TU AV), the AIS trajectories are then projected
+into the visible image coordinate system for further association. Although the alignment
+accuracy of AIS targets in the visible image coordinate system is not high, the previous two
+steps have already filtered out most of the trajectories. The remaining targets are relatively
+independent, thus reducing the demand for alignment accuracy. Finally, in integrated
+matching, based on the radar matching result, the AIS and visible trajectories that share the
+
+=== PAGE 15 ===
+Sensors 2025, 25, 2179 15 of 28
+same radar matching ID are considered associated, enabling the cascade matching of the
+information from all three sources. Thereby, the multi-source data association and fusion
+is completed.
+3.3. Datasets
+3.3.1. Sensor Setup
+As there are no publicly available multi-source perception datasets for surface vessel
+targets that include synchronized AIS, radar, and visible data across diverse scenes, we develop
+a multi-sensors platform, including AIS receiver, marine radar, and visible camera, to collect the
+synchronized data. The collected data are organized into a dataset to validate the performance
+of the proposed framework and provide an benchmark for future research, which is referred to
+as WHUT-MSFV essel. The specific parameters of each sensor are as follows:
+• The AIS receiver, a Simrad NAIS-500 Class B AIS, captures signals at VHF frequencies
+of 161.975 MHz and 162.025 MHz.
+• The radar, a Simrad HALO20+ marine radar with a detection range of 36 nautical
+miles, outputs two-dimensional radar images.
+• The visible camera, a Hikvision DS-2DE7440IW-A, is equipped with a 1/2.8” CMOS
+image sensor. It outputs images at a resolution of 2560 × 1440.
+The platform is positioned perpendicular to the Yangtze River channel, with deploy-
+ment coordinates at [114.306087, 30.563549] and a height of 20 meters above the water
+surface. The data collection spans 12 months to ensure sufficient diversity in the dataset.
+The original format of the multi-source data in the dataset is illustrated in Figure 6.
+Figure 6. Examples of collected data in WHUT-MSFVessel dataset, including radar images, visible
+images, and AIS coded messages.
+3.3.2. Detail Description
+This study constructs the dataset consisting of 22 scene segments. It covers a variety
+of weather conditions, such as sunny, cloudy, rainy, and foggy, as shown in Figure 7, to
+reflect complex real-world situations. All multi-source heterogeneous data are collected
+synchronously. AIS data are stored in their raw coded format as text formats. Radar and
+visible data are provided as a continuous frame, each named with a millisecond-accurate
+timestamp. Meanwhile, visible data also contain the original video with a refresh frequency
+of 25 Hz. Table 2 shows more detailed information for each scene, including parameters
+such as scene duration, the total number of radar and visible targets, the maximum number
+of targets within the camera view, the number of occluded targets, and weather.
+
+=== PAGE 16 ===
+Sensors 2025, 25, 2179 16 of 28
+(a) Sunny
+ (b) Cloudy
+(c) Rainy
+ (d) Foggy
+Figure 7. Some samples of visible image representing different weather conditions in WHUT-
+MSFVessel dataset, including sunny, cloudy, rainy, and foggy.
+Table 2. Detail of the WHUT-MSFVessel dataset. The “NR”, “NV”, “MN”, and “OC” represent the
+total number of radar targets, the total number of visible targets, the maximum number of targets in
+camera view, and the number of occluded targets, respectively.
+Scene Duration NR NV MN OC Weather
+scene01 09m06s 12 4 3 1 Sunny
+scene02 04m20s 25 7 6 3 Cloudy
+scene03 08m20s 21 10 9 1 Cloudy
+scene04 07m01s 17 6 5 4 Rainy
+scene05 07m16s 15 6 5 2 Foggy
+scene06 15m20s 32 10 6 4 Sunny
+scene07 11m50s 11 5 3 0 Sunny
+scene08 14m54s 30 11 6 4 Sunny
+scene09 18m38s 17 10 5 3 Sunny
+scene10 10m07s 19 8 4 2 Cloudy
+scene11 21m22s 12 8 6 0 Cloudy
+scene12 13m21s 20 12 6 4 Cloudy
+scene13 18m16s 18 7 3 0 Rainy
+scene14 14m48s 21 5 4 1 Rainy
+scene15 21m23s 25 6 4 2 Rainy
+scene16 17m02s 18 7 3 2 Rainy
+scene17 23m12s 33 9 6 3 Rainy
+scene18 30m17s 19 6 2 2 Foggy
+scene19 21m45s 15 5 3 0 Foggy
+scene20 19m24s 20 9 5 2 Foggy
+scene21 31m36s 27 9 6 0 Foggy
+scene22 41m07s 31 12 5 4 Foggy
+The visible and radar images in WHUT-MSFVessel are labeled by using the profes-
+sional tools Darklabel to draw a bounding box covering the vessel targets in each frame.
+Since the class of targets in the radar images is difficult to identify, and the AIS data contain
+precise ship types, only one class, vessel, is used for labeling. For radar targets that are
+difficult to distinguish from clutter, professionals with extensive radar using experience
+
+=== PAGE 17 ===
+Sensors 2025, 25, 2179 17 of 28
+will identify and label them by referring to information from adjacent frames to ensure
+annotation accuracy. Additionally, each vessel entity will be assigned a globally unique
+ID to facilitate identification in tracking tasks. All annotation data are stored in the same
+CSV file format as the MOT dataset [55]. The dataset structure and annotation examples
+are shown in Figure 8.
+Figure 8. The dataset structure and annotation examples. The data of each scene include AIS text file,
+synchronized visible and radar images, annotation data stored in csv files, and camera video. During
+the annotation process, bounding boxes are used to cover vessel targets, and each target is assigned a
+globally unique tracking ID.
+As the first publicly available multi-source fusion dataset specifically designed for
+intelligent maritime navigation, WHUT-MSFVessel addresses the longstanding data gap in
+this field, establishing a standardized benchmark for future research. Distinguished from
+existing datasets, WHUT-MSFVessel integrates data from the three most common sensing
+data in vessel navigation: AIS, marine radar, and visible camera. It achieves spatiotemporal
+synchronization for heterogeneous data collection under real-world navigation conditions,
+which has not been seen in previous studies. Additionally, all data are annotated in a
+unified format, allowing flexible applications in various perception tasks such as detection,
+tracking, and fusion. Furthermore, the dataset encompasses diverse weather conditions
+and navigation scenes, enabling the comprehensive evaluation of algorithm performance
+and robustness under different environments.
+4. Experimental Results
+4.1. Implementation Details
+To validate the detection and tracking performance of MSTrack and the overall fu-
+sion performance of the proposed framework, we conducted experiments on the WHUT-
+MSFVessel dataset.
+First, the WHUT-MSFVessel dataset was manually divided, with scene01 to scene05
+designated as the testing set, specifically for evaluating the performance of detection,
+tracking, and fusion. The remaining scenes were used as the training set for network model
+training. This division was made because the images in our dataset are continuous video
+frames. If a random sampling method were used to divide the training and testing sets,
+the images in two sets would be similar, thus failing to objectively reflect the real detection
+and tracking performance. Meanwhile, scenes 01–05 encompass all typical scenarios in
+the dataset, covering various weather conditions (sunny, cloudy, rainy, and foggy) as well
+
+=== PAGE 18 ===
+Sensors 2025, 25, 2179 18 of 28
+as different vessel densities. This selection ensures a comprehensive evaluation of the
+proposed method’s real-world performance across diverse scenarios.
+In the detection and tracking module, YOLOv8 was used as a basic detector for the
+TBD tracking framework. Training on the WHUT-MSFVessel dataset was performed on
+an NVIDIA A100 GPU. The training utilized SGD as the optimizer, with a batch size of
+16 and an initial learning rate of 0.01. The visible data were trained for 200 epochs, while
+the radar data required only 100 epochs to achieve satisfactory convergence. Additionally,
+we fine-tuned and retrained the re-identification network within the tracking algorithm
+to better adapt to the scale and features of vessel targets. The track buffer length in the
+tracking algorithm is also a key parameter, which will determine the number of frames
+to retain the unmatched trajectory. Due to the high refresh rate and slow vessel motion
+during visible tracking, the track buffer length of all algorithms was set to 300. During
+radar tracking, the value was set to 5.
+During the processing of multi-source heterogeneous data, the AIS data cover targets
+within approximately 10 km of the collection platform, while the radar detection radius is
+set to 5 km, and the horizontal field of view of the visible camera is 54.3°. Based on these
+parameters, the multi-source perception scene is divided into three areas: the buffer area,
+the AIS–radar fusion (ARF) area, and the multi-source fusion (MSF) area as illustrated in
+Figure 9. Different preprocessing and fusion strategies are applied to each area.
+Figure 9. Different areas in the multi-source perception scene. AIS data in the buffer area are cached
+before entering the fusion areas. In the ARF area, the AIS and radar trajectories are fused. The MSF
+area is the camera’s field of view; only this area contains AIS, radar, and visible data at the same time,
+so the multi-source fusion is carried out in this area.
+First of all, although the radar scan image is a circular area, the data collection area
+is located within an inland waterway, resulting in significant irrelevant land areas in the
+images. To address this, a rectangular region is defined to segment the waterway area as
+the fusion area. Areas outside the rectangle are designated as the buffer area, with only AIS
+data being managed inside it. The buffer area exists to address the low update frequency of
+AIS data, ensuring that targets entering the fusion area immediately possess AIS trajectories
+that can be used for alignment and fusion. Within the fusion area, further division is based
+on the camera’s field of view, represented by a triangular region in Figure 9. This creates the
+ARF area and the MSF area. The triangular region is designated as the MSF area, where all
+three data types coexist, and multi-source fusion is performed using the cascade matching
+method described in Section 3.2.2. In the ARF area, only the association and fusion of AIS
