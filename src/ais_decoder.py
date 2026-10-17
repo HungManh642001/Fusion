@@ -48,6 +48,8 @@ class AISDecoder:
 
     def decode_file(self, filepath: str) -> List[AISMessage]:
         messages = []
+        last_valid_cog = {}
+        last_valid_sog = {}
         with open(filepath, 'r', encoding='utf-8', errors='ignore') as f:
             for line in f:
                 line = line.strip()
@@ -70,15 +72,34 @@ class AISDecoder:
                         sog = getattr(decoded, 'speed', None)
                         cog = getattr(decoded, 'course', None)
                         if mmsi and lat is not None and lon is not None:
+                            mmsi_int = int(mmsi)
+                            # In standard NMEA, COG >= 360.0 indicates 'not available'.
+                            # Fallback to last valid COG for this vessel if available.
+                            if cog is not None and 0.0 <= float(cog) < 360.0:
+                                last_valid_cog[mmsi_int] = float(cog)
+                                eff_cog = float(cog)
+                            elif mmsi_int in last_valid_cog:
+                                eff_cog = last_valid_cog[mmsi_int]
+                            else:
+                                eff_cog = 0.0
+
+                            if sog is not None and 0.0 <= float(sog) < 102.0:
+                                last_valid_sog[mmsi_int] = float(sog)
+                                eff_sog = float(sog)
+                            elif mmsi_int in last_valid_sog:
+                                eff_sog = last_valid_sog[mmsi_int]
+                            else:
+                                eff_sog = 0.0
+
                             # Verify valid bounds
                             if self.lat_bounds[0] <= lat <= self.lat_bounds[1] and self.lon_bounds[0] <= lon <= self.lon_bounds[1]:
                                 messages.append(AISMessage(
                                     ts=ts,
-                                    mmsi=int(mmsi),
+                                    mmsi=mmsi_int,
                                     lat=float(lat),
                                     lon=float(lon),
-                                    sog=float(sog) if sog is not None else 0.0,
-                                    cog=float(cog) if cog is not None else 0.0
+                                    sog=eff_sog,
+                                    cog=eff_cog
                                 ))
                     except Exception:
                         continue

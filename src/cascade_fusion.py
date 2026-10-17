@@ -39,6 +39,7 @@ class CascadeFusion:
         self.transformer = coord_transformer or CoordinateTransformer()
         self.match_cost_thresh = match_cost_thresh
         self.fusion_counter = 0
+        self.radar_mmsi_history: Dict[int, int] = {}
 
     def compute_cost(self, s1: TrajectoryState, s2: TrajectoryState, k: float = 0.5, l_limit: int = 100, t_limit: int = 60000) -> float:
         """
@@ -50,28 +51,29 @@ class CascadeFusion:
         # Spatial distance
         dist = math.hypot(s1.x - s2.x, s1.y - s2.y)
         
-        # Azimuth difference in [0, pi]
-        diff_az = abs(s1.azimuth - s2.azimuth)
-        if diff_az > math.pi:
-            diff_az = 2.0 * math.pi - diff_az
-
         # Velocity magnitude difference
         v1_mag = math.hypot(s1.vx, s1.vy)
         v2_mag = math.hypot(s2.vx, s2.vy)
-        diff_v = abs(v1_mag - v2_mag)
 
-        # Cosine distance of velocity vectors (Eq. 13)
-        dot_prod = s1.vx * s2.vx + s1.vy * s2.vy
-        eps = 1e-6
-        if v1_mag * v2_mag > eps:
+        if v1_mag > 0.05 and v2_mag > 0.05:
+            diff_v = abs(v1_mag - v2_mag)
+            diff_az = abs(s1.azimuth - s2.azimuth)
+            if diff_az > math.pi:
+                diff_az = 2.0 * math.pi - diff_az
+            diff_az_norm = diff_az / math.pi
+
+            # Cosine distance of velocity vectors (Eq. 13)
+            dot_prod = s1.vx * s2.vx + s1.vy * s2.vy
+            eps = 1e-6
             cos_val = dot_prod / (v1_mag * v2_mag)
+            cos_dist = (cos_val + 1.0 + eps) / 2.0
+            cos_dist = max(eps, min(1.0, cos_dist))
         else:
-            cos_val = 1.0  # Stationary targets have neutral cosine alignment
-        
-        cos_dist = (cos_val + 1.0 + eps) / 2.0
-        cos_dist = max(eps, min(1.0, cos_dist))
+            diff_v = 0.0
+            diff_az_norm = 0.0
+            cos_dist = 1.0
 
-        cost = (k * dist + (1.0 - k) * diff_az + diff_v) / cos_dist
+        cost = (k * dist + (1.0 - k) * diff_az_norm + diff_v) / cos_dist
         return float(cost)
 
     def fuse(
@@ -91,16 +93,32 @@ class CascadeFusion:
         ais_states: List[Tuple[Dict, TrajectoryState]] = []
         for a in ais_records:
             xr, yr = self.transformer.geodetic_to_radar(a['lat'], a['lon'])
-            cog_rad = math.radians(a.get('cog', 0.0))
-            sog = a.get('sog', 0.0)
-            vx = sog * math.sin(cog_rad)
-            vy = sog * math.cos(cog_rad)
+            # Extrapolate 1000ms ahead to determine velocity vector in radar coordinate space
+            from src.ais_decoder import AISMessage, extrapolate_kinematic
+            m_temp = AISMessage(
+                mmsi=a['mmsi'],
+                lat=a['lat'],
+                lon=a['lon'],
+                sog=a.get('sog', 0.0),
+                cog=a.get('cog', 0.0),
+                ts=ts
+            )
+            lat_next, lon_next = extrapolate_kinematic(m_temp, target_ts=ts + 1000)
+            xr_next, yr_next = self.transformer.geodetic_to_radar(lat_next, lon_next)
+            vx_rad = xr_next - xr
+            vy_rad = yr_next - yr
+            v_mag_rad = math.hypot(vx_rad, vy_rad)
+            if v_mag_rad > 1e-4:
+                az_rad = math.atan2(vx_rad, vy_rad)
+            else:
+                az_rad = 0.0
+
             state = TrajectoryState(
                 x=xr / 2048.0,
                 y=yr / 2048.0,
-                vx=vx / 20.0,
-                vy=vy / 20.0,
-                azimuth=cog_rad,
+                vx=vx_rad / 20.0,
+                vy=vy_rad / 20.0,
+                azimuth=az_rad,
                 entry_time=a.get('ts', ts),
                 length=10
             )
@@ -112,14 +130,32 @@ class CascadeFusion:
             bbox = r['bbox']
             xc = bbox[0] + bbox[2] / 2.0
             yc = bbox[1] + bbox[3] / 2.0
+            traj = r.get('trajectory', [])
+            if len(traj) >= 2:
+                win_size = min(len(traj), 5)
+                p_last = traj[-1]
+                p_prev = traj[-win_size]
+                dx = (p_last[0] + p_last[2] / 2.0) - (p_prev[0] + p_prev[2] / 2.0)
+                dy = (p_last[1] + p_last[3] / 2.0) - (p_prev[1] + p_prev[3] / 2.0)
+                dt_frames = win_size - 1
+                v_mag = math.hypot(dx, dy) / dt_frames
+                if v_mag > 0.05:
+                    vx = dx / (dt_frames * 20.0)
+                    vy = dy / (dt_frames * 20.0)
+                    az = math.atan2(dx, dy)
+                else:
+                    vx, vy, az = 0.0, 0.0, 0.0
+            else:
+                vx, vy, az = 0.0, 0.0, 0.0
+
             state = TrajectoryState(
                 x=xc / 2048.0,
                 y=yc / 2048.0,
-                vx=0.2,  # Nominal default motion scale
-                vy=0.2,
-                azimuth=0.0,
+                vx=vx,
+                vy=vy,
+                azimuth=az,
                 entry_time=r.get('ts', ts),
-                length=10
+                length=len(traj) if traj else 10
             )
             radar_states.append((r, state))
 
@@ -142,21 +178,29 @@ class CascadeFusion:
             )
             vis_states.append((v, state))
 
-        # --- STEP 1: Pairwise AIS - Radar Association (k = 0.5) ---
+        # --- STEP 1: Pairwise AIS - Radar Association (k = 0.8, prioritizing spatial accuracy) ---
         matched_ais_rad: Dict[int, int] = {}  # ais_idx -> rad_idx
         unmatched_ais = list(range(len(ais_states)))
         unmatched_rad = list(range(len(radar_states)))
 
         if len(ais_states) > 0 and len(radar_states) > 0:
             cost_ar = np.zeros((len(ais_states), len(radar_states)), dtype=np.float32)
-            for i, (_, s_a) in enumerate(ais_states):
-                for j, (_, s_r) in enumerate(radar_states):
-                    cost_ar[i, j] = self.compute_cost(s_a, s_r, k=0.5)
+            for i, (a_data, s_a) in enumerate(ais_states):
+                for j, (r_data, s_r) in enumerate(radar_states):
+                    c = self.compute_cost(s_a, s_r, k=0.8)
+                    dist_px = math.hypot(s_a.x - s_r.x, s_a.y - s_r.y) * 2048.0
+                    r_tid = r_data.get('track_id')
+                    if r_tid in self.radar_mmsi_history and self.radar_mmsi_history[r_tid] == a_data['mmsi'] and dist_px < 50.0:
+                        c -= 0.5  # Temporal continuity hysteresis
+                    cost_ar[i, j] = c
 
             r_ind, c_ind = linear_sum_assignment(cost_ar)
             for r, c in zip(r_ind, c_ind):
                 if cost_ar[r, c] < self.match_cost_thresh:
                     matched_ais_rad[r] = c
+                    r_tid = radar_states[c][0].get('track_id')
+                    a_mmsi = ais_states[r][0]['mmsi']
+                    self.radar_mmsi_history[r_tid] = a_mmsi
                     if r in unmatched_ais:
                         unmatched_ais.remove(r)
                     if c in unmatched_rad:

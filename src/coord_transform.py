@@ -33,6 +33,13 @@ class CoordinateTransformer:
         res = self.M_geo2rad @ pt
         return float(res[0]), float(res[1])
 
+    def radar_to_geodetic(self, xr: float, yr: float) -> Tuple[float, float]:
+        """Inverse affine mapping from radar pixels (xr, yr) to geodetic (lat, lon)."""
+        pt = np.array([xr - self.M_geo2rad[0, 2], yr - self.M_geo2rad[1, 2]], dtype=np.float64)
+        M2x2 = self.M_geo2rad[:, :2]
+        lon_lat = np.linalg.inv(M2x2) @ pt
+        return float(lon_lat[1]), float(lon_lat[0])
+
     def radar_to_visible(self, xr: float, yr: float) -> Tuple[float, float]:
         """Maps radar pixel coordinates (xr, yr) to visible camera center (xv, yv)."""
         pt = np.array([xr, yr, 1.0], dtype=np.float64)
