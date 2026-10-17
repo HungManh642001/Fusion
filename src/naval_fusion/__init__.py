@@ -13,12 +13,15 @@ from src.naval_fusion.models import (
     SensorType,
     TrackState,
 )
+from src.naval_fusion.pipeline import NavalFusionPipeline
 
 __all__ = [
     "AutoferryLoader",
     "Detection",
     "EvaluationMetrics",
+    "NavalFusionPipeline",
     "OwnshipState",
     "SensorType",
     "TrackState",
 ]
+
