@@ -2,28 +2,29 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<title>Hệ Thống Tác Chiến Hải Quân C2 - Giám Sát Động Học Đa Cảm Biến</title>
+<title>Hệ Thống Tác Chiến Hải Quân C2 - Giám Sát Hải Trình Đa Cảm Biến</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
     background-color: #0b0f14;
     color: #e2e8f0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "DejaVu Sans", sans-serif;
     display: flex;
     flex-direction: column;
     height: 100vh;
     overflow: hidden;
   }
   header {
-    background: linear-gradient(90deg, #0d1b2a, #1b263b);
+    background: #0d1b2a;
     border-bottom: 2px solid #00f2fe;
-    padding: 8px 18px;
+    padding: 8px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    height: 50px;
   }
-  header h1 { font-size: 1.15rem; color: #00f2fe; letter-spacing: 0.5px; }
-  header .sub { font-size: 0.75rem; color: #94a3b8; }
+  header h1 { font-size: 1.12rem; color: #00f2fe; letter-spacing: 0.5px; font-weight: bold; }
+  header .sub { font-size: 0.72rem; color: #94a3b8; margin-top: 2px; }
   .main-container {
     display: flex;
     flex: 1;
@@ -45,12 +46,12 @@
   }
   .telemetry-sidebar {
     width: 440px;
-    background: rgba(15, 23, 42, 0.96);
+    background: rgba(15, 23, 42, 0.98);
     border-left: 1px solid #334155;
-    padding: 12px 14px;
+    padding: 10px 14px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
     overflow-y: auto;
   }
   .card {
@@ -60,11 +61,11 @@
     padding: 8px 12px;
   }
   .card-title {
-    font-size: 0.82rem;
+    font-size: 0.8rem;
     font-weight: bold;
     color: #38bdf8;
     text-transform: uppercase;
-    margin-bottom: 5px;
+    margin-bottom: 4px;
     border-bottom: 1px solid #334155;
     padding-bottom: 3px;
     display: flex;
@@ -73,31 +74,31 @@
   .metric-row {
     display: flex;
     justify-content: space-between;
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     margin: 3px 0;
   }
   .metric-val { font-weight: bold; font-family: monospace; }
   .val-green { color: #4ade80; }
   .val-blue { color: #38bdf8; }
   .val-orange { color: #fb923c; }
-  .val-yellow { color: #facc15; }
   .controls-bar {
     background: #0f172a;
     border-top: 1px solid #334155;
-    padding: 6px 18px;
+    padding: 8px 20px;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 14px;
+    height: 52px;
   }
   .btn {
     background: #0284c7;
     color: white;
     border: none;
     border-radius: 4px;
-    padding: 5px 12px;
+    padding: 6px 14px;
     cursor: pointer;
     font-weight: bold;
-    font-size: 0.82rem;
+    font-size: 0.8rem;
   }
   .btn:hover { background: #0369a1; }
   input[type="range"] {
@@ -107,7 +108,7 @@
   }
   .badge {
     display: inline-block;
-    padding: 2px 6px;
+    padding: 3px 8px;
     border-radius: 4px;
     font-size: 0.72rem;
     font-weight: bold;
@@ -118,66 +119,61 @@
 
 <header>
   <div>
-    <h1>HỆ THỐNG TÁC CHIẾN HẢI QUÂN C2 - GIÁM SÁT HẢI TRÌNH ĐA CẢM BIẾN THỜI GIAN THỰC</h1>
+    <h1>HỆ THỐNG TÁC CHIẾN HẢI QUÂN C2 - GIÁM SÁT HẢI TRÌNH ĐA CẢM BIẾN</h1>
     <div class="sub">TẬP DỮ LIỆU ĐỐI CHỨNG: NTNU AUTOFERRY BENCHMARK (SCENARIO 2) | HỆ TỌA ĐỘ TRẮC ĐỊA WGS-84</div>
   </div>
   <div style="text-align: right;">
     <span class="badge" style="background: #166534; color: #86efac;">ĐÃ LÀM MƯỢT ĐỘNG HỌC (SMOOTHED)</span>
-    <div class="sub">KHỬ 96.8% DAO ĐỘNG GÓC MẠN CAMERA</div>
   </div>
 </header>
 
 <div class="main-container">
   <div class="canvas-panel">
-    <canvas id="ppiCanvas" width="760" height="610"></canvas>
+    <canvas id="ppiCanvas" width="760" height="600"></canvas>
   </div>
 
   <div class="telemetry-sidebar">
-    <!-- Progress -->
+    <!-- Card 1: Tiến Trình -->
     <div class="card">
-      <div class="card-title">TIẾN TRÌNH NHIỆM VỤ <span id="timeBadge" class="badge" style="background:#0369a1;">00.0s / 118.0s</span></div>
+      <div class="card-title">TIẾN TRÌNH NHIỆM VỤ <span id="timeBadge" class="badge" style="background:#0369a1; color:white;">00.0s / 118.0s</span></div>
       <div class="metric-row"><span>Sự Kiện Đo:</span><span id="txtStep" class="metric-val">#0000 / 1907</span></div>
-      <div class="metric-row"><span>Cảm Biến Đang Bắt:</span><span id="txtSensor" class="metric-val val-blue">3D LiDAR</span></div>
+      <div class="metric-row"><span>Cảm Biến Kích Hoạt:</span><span id="txtSensor" class="metric-val val-blue">3D LiDAR</span></div>
     </div>
 
-    <!-- Ownship Card -->
-    <div class="card" style="border-left: 3px solid #38bdf8;">
+    <!-- Card 2: Ownship -->
+    <div class="card" style="border: 1px solid #38bdf8;">
       <div class="card-title" style="color: #38bdf8;">TÀU QUAN TRẮC MẸ (OWNSHIP)</div>
       <div class="metric-row"><span>Tọa Độ Vĩ Độ (Lat):</span><span id="txtOwnLat" class="metric-val val-blue">--°N</span></div>
       <div class="metric-row"><span>Tọa Độ Kinh Độ (Lon):</span><span id="txtOwnLon" class="metric-val val-blue">--°E</span></div>
-      <div class="metric-row"><span>Vận Tốc SOG:</span><span id="txtOwnSog" class="metric-val val-blue">-- kts</span></div>
-      <div class="metric-row"><span>Hướng Đi COG:</span><span id="txtOwnCog" class="metric-val val-blue">--°</span></div>
+      <div class="metric-row"><span>Vận Tốc SOG / Hướng Đi COG:</span><span id="txtOwnSogCog" class="metric-val val-blue">-- kts | --°</span></div>
     </div>
 
-    <!-- Target 1 Card -->
-    <div class="card" style="border-left: 3px solid #4ade80;">
+    <!-- Card 3: Target 1 -->
+    <div class="card" style="border: 1px solid #4ade80;">
       <div class="card-title" style="color: #4ade80;">MỤC TIÊU 01: HAVFRUEN (TÀU DU LỊCH)</div>
       <div class="metric-row"><span>Tọa Độ Vĩ Độ (Lat):</span><span id="txtT1Lat" class="metric-val val-green">--°N</span></div>
       <div class="metric-row"><span>Tọa Độ Kinh Độ (Lon):</span><span id="txtT1Lon" class="metric-val val-green">--°E</span></div>
-      <div class="metric-row"><span>Vận Tốc SOG:</span><span id="txtT1Sog" class="metric-val val-green">-- kts</span></div>
-      <div class="metric-row"><span>Hướng Đi COG:</span><span id="txtT1Cog" class="metric-val val-green">--°</span></div>
+      <div class="metric-row"><span>Vận Tốc SOG / Hướng Đi COG:</span><span id="txtT1SogCog" class="metric-val val-green">-- kts | --°</span></div>
       <div class="metric-row"><span>Cự Ly / Góc Mạn:</span><span id="txtT1Tactical" class="metric-val">-- m / --°</span></div>
       <div class="metric-row"><span>Sai Số vs RTK GPS:</span><span id="txtT1Err" class="metric-val val-green">-- m</span></div>
     </div>
 
-    <!-- Target 2 Card -->
-    <div class="card" style="border-left: 3px solid #fb923c;">
-      <div class="card-title" style="color: #fb923c;">MỤC TIÊU 02: GUNNERUS (TÀU NGHIÊN CỨU 31.25M)</div>
+    <!-- Card 4: Target 2 -->
+    <div class="card" style="border: 1px solid #fb923c;">
+      <div class="card-title" style="color: #fb923c;">MỤC TIÊU 02: GUNNERUS (TÀU NGHIÊN CỨU 31M)</div>
       <div class="metric-row"><span>Tọa Độ Vĩ Độ (Lat):</span><span id="txtT2Lat" class="metric-val val-orange">--°N</span></div>
       <div class="metric-row"><span>Tọa Độ Kinh Độ (Lon):</span><span id="txtT2Lon" class="metric-val val-orange">--°E</span></div>
-      <div class="metric-row"><span>Vận Tốc SOG:</span><span id="txtT2Sog" class="metric-val val-orange">-- kts</span></div>
-      <div class="metric-row"><span>Hướng Đi COG:</span><span id="txtT2Cog" class="metric-val val-orange">--°</span></div>
+      <div class="metric-row"><span>Vận Tốc SOG / Hướng Đi COG:</span><span id="txtT2SogCog" class="metric-val val-orange">-- kts | --°</span></div>
       <div class="metric-row"><span>Cự Ly / Góc Mạn:</span><span id="txtT2Tactical" class="metric-val">-- m / --°</span></div>
       <div class="metric-row"><span>Sai Số vs RTK GPS:</span><span id="txtT2Err" class="metric-val val-orange">-- m</span></div>
     </div>
 
-    <!-- Summary Performance -->
+    <!-- Card 5: Hiệu Năng -->
     <div class="card">
       <div class="card-title">ĐÁNH GIÁ ĐỘ CHÍNH XÁC HỢP NHẤT</div>
-      <div class="metric-row"><span>Target 1 RMSE:</span><span class="metric-val val-green">6.15 mét</span></div>
-      <div class="metric-row"><span>Target 2 RMSE:</span><span class="metric-val val-orange">9.46 mét</span></div>
-      <div class="metric-row"><span>Sai Số Chung Toàn Tuyến:</span><span class="metric-val val-blue" style="font-size:0.95rem;">7.98 mét</span></div>
-      <div class="metric-row"><span>Độ Mượt Đường Đi (Smoothness):</span><span class="metric-val val-green">LIỀN MẠCH, KHÔNG RĂNG CƯA</span></div>
+      <div class="metric-row"><span>Sai Số Chung Toàn Tuyến (RMSE):</span><span class="metric-val val-blue" style="font-size:0.92rem;">7.98 mét</span></div>
+      <div class="metric-row"><span>Trạng Thái Khóa Vệt Bám:</span><span class="metric-val val-green">KHÓA LIÊN TỤC</span></div>
+      <div class="metric-row"><span>Độ Mượt Đường Đi (Smoothness):</span><span class="metric-val val-green">KHỬ 96.8% GIẬT</span></div>
     </div>
   </div>
 </div>
@@ -185,10 +181,10 @@
 <div class="controls-bar">
   <button id="btnPlay" class="btn">▶ PHÁT</button>
   <button id="btnReset" class="btn" style="background:#475569;">⏮ ĐẦU</button>
-  <span style="font-size:0.75rem; color:#94a3b8;">DÒ THỜI GIAN:</span>
+  <span style="font-size:0.75rem; color:#94a3b8;">TIẾN TRÌNH:</span>
   <input type="range" id="timeSlider" min="0" max="477" value="0">
   <span id="sliderLabel" style="font-size:0.8rem; font-family:monospace; min-width: 50px;">0.0s</span>
-  <select id="speedSelect" style="background:#1e293b; color:white; border:1px solid #334155; padding:3px 6px; border-radius:4px; font-size:0.78rem;">
+  <select id="speedSelect" style="background:#1e293b; color:white; border:1px solid #334155; padding:3px 8px; border-radius:4px; font-size:0.78rem;">
     <option value="1">1x</option>
     <option value="2" selected>2x</option>
     <option value="4">4x</option>
@@ -225,9 +221,9 @@
     const f = frames[idx];
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // PPI background
+    // Radar circular scope
     ctx.beginPath();
-    ctx.arc(cx, cy, 285, 0, Math.PI * 2);
+    ctx.arc(cx, cy, 275, 0, Math.PI * 2);
     ctx.fillStyle = '#081414';
     ctx.fill();
     ctx.strokeStyle = '#059669';
@@ -235,7 +231,7 @@
     ctx.stroke();
 
     // Range rings
-    [50, 100, 150].forEach(r_m => {
+    [50, 100, 140].forEach(r_m => {
       ctx.beginPath();
       ctx.arc(cx, cy, r_m * scale, 0, Math.PI * 2);
       ctx.strokeStyle = '#1e3a2f';
@@ -248,20 +244,28 @@
 
     // Crosshairs
     ctx.beginPath();
-    ctx.moveTo(cx - 285, cy); ctx.lineTo(cx + 285, cy);
-    ctx.moveTo(cx, cy - 285); ctx.lineTo(cx, cy + 285);
+    ctx.moveTo(cx - 275, cy); ctx.lineTo(cx + 275, cy);
+    ctx.moveTo(cx, cy - 275); ctx.lineTo(cx, cy + 275);
     ctx.strokeStyle = '#1e3a2f';
     ctx.stroke();
+
+    // Compass
+    ctx.fillStyle = '#00f2fe'; ctx.font = 'bold 11px sans-serif';
+    ctx.fillText("N", cx - 4, cy - 280);
+    ctx.fillStyle = '#94a3b8';
+    ctx.fillText("E", cx + 280, cy + 4);
+    ctx.fillText("S", cx - 4, cy + 292);
+    ctx.fillText("W", cx - 294, cy + 4);
 
     // Rotating scan beam
     const angle = (f.time_rel * 2.0) % (Math.PI * 2);
     ctx.beginPath();
     ctx.moveTo(cx, cy);
-    ctx.lineTo(cx + 285 * Math.cos(angle), cy + 285 * Math.sin(angle));
+    ctx.lineTo(cx + 275 * Math.cos(angle), cy + 275 * Math.sin(angle));
     ctx.strokeStyle = 'rgba(5, 150, 105, 0.4)';
     ctx.stroke();
 
-    // Ownship Trail & Marker
+    // Ownship Trail & Icon
     ctx.beginPath();
     for (let k = 0; k <= idx; k++) {
       const p = world2pixel(frames[k].ownship_ned[0], frames[k].ownship_ned[1]);
@@ -280,7 +284,7 @@
     ctx.font = '10px sans-serif';
     ctx.fillText("OWNSHIP", own.x - 24, own.y + 16);
 
-    // Target 1 Trail & Marker (Havfruen - Smooth Green)
+    // Target 1 Trail & Marker (Havfruen)
     ctx.beginPath();
     for (let k = 0; k <= idx; k++) {
       const p = world2pixel(frames[k].t1_ned[0], frames[k].t1_ned[1]);
@@ -293,9 +297,15 @@
     const t1 = world2pixel(f.t1_ned[0], f.t1_ned[1]);
     ctx.fillStyle = '#4ade80';
     ctx.fillRect(t1.x - 5, t1.y - 5, 10, 10);
-    ctx.fillText("TGT-01", t1.x + 8, t1.y + 4);
+    ctx.fillStyle = '#0f172a';
+    ctx.fillRect(t1.x + 8, t1.y - 9, 105, 18);
+    ctx.strokeStyle = '#4ade80';
+    ctx.strokeRect(t1.x + 8, t1.y - 9, 105, 18);
+    ctx.fillStyle = '#4ade80';
+    ctx.font = '10px sans-serif';
+    ctx.fillText("TGT-01: Havfruen", t1.x + 12, t1.y + 4);
 
-    // Target 2 Trail & Marker (Gunnerus - Smooth Orange)
+    // Target 2 Trail & Marker (Gunnerus)
     ctx.beginPath();
     for (let k = 0; k <= idx; k++) {
       const p = world2pixel(frames[k].t2_ned[0], frames[k].t2_ned[1]);
@@ -308,7 +318,12 @@
     const t2 = world2pixel(f.t2_ned[0], f.t2_ned[1]);
     ctx.fillStyle = '#fb923c';
     ctx.fillRect(t2.x - 5, t2.y - 5, 10, 10);
-    ctx.fillText("TGT-02", t2.x + 8, t2.y + 4);
+    ctx.fillStyle = '#0f172a';
+    ctx.fillRect(t2.x + 8, t2.y - 9, 108, 18);
+    ctx.strokeStyle = '#fb923c';
+    ctx.strokeRect(t2.x + 8, t2.y - 9, 108, 18);
+    ctx.fillStyle = '#fb923c';
+    ctx.fillText("TGT-02: Gunnerus", t2.x + 12, t2.y + 4);
 
     // Current Sensor Hits
     const s_colors = { 1: '#f87171', 2: '#38bdf8', 3: '#facc15', 4: '#c084fc' };
@@ -318,7 +333,7 @@
     f.pts.forEach(p => {
       const pt = world2pixel(p[0], p[1]);
       ctx.beginPath();
-      ctx.arc(pt.x, pt.y, 5, 0, Math.PI * 2);
+      ctx.arc(pt.x, pt.y, 4, 0, Math.PI * 2);
       ctx.fillStyle = s_col;
       ctx.fill();
     });
@@ -344,8 +359,7 @@
     // Ownship
     document.getElementById('txtOwnLat').innerText = f.ownship_lat.toFixed(6) + '°N';
     document.getElementById('txtOwnLon').innerText = f.ownship_lon.toFixed(6) + '°E';
-    document.getElementById('txtOwnSog').innerText = f.ownship_sog.toFixed(2) + ' knots';
-    document.getElementById('txtOwnCog').innerText = f.ownship_cog.toFixed(1) + '°';
+    document.getElementById('txtOwnSogCog').innerText = f.ownship_sog.toFixed(2) + ' kts | ' + f.ownship_cog.toFixed(1) + '°';
 
     // Target 1
     const dN1 = f.t1_ned[0] - f.ownship_ned[0], dE1 = f.t1_ned[1] - f.ownship_ned[1];
@@ -353,8 +367,7 @@
     const brg1 = (((Math.atan2(dE1, dN1) * 180 / Math.PI) + 360) % 360).toFixed(1);
     document.getElementById('txtT1Lat').innerText = f.t1_lat.toFixed(6) + '°N';
     document.getElementById('txtT1Lon').innerText = f.t1_lon.toFixed(6) + '°E';
-    document.getElementById('txtT1Sog').innerText = f.t1_sog.toFixed(2) + ' knots';
-    document.getElementById('txtT1Cog').innerText = f.t1_cog.toFixed(1) + '°';
+    document.getElementById('txtT1SogCog').innerText = f.t1_sog.toFixed(2) + ' kts | ' + f.t1_cog.toFixed(1) + '°';
     document.getElementById('txtT1Tactical').innerText = rng1 + ' m / ' + brg1 + '°';
     document.getElementById('txtT1Err').innerText = f.t1_err.toFixed(2) + ' m';
 
@@ -364,8 +377,7 @@
     const brg2 = (((Math.atan2(dE2, dN2) * 180 / Math.PI) + 360) % 360).toFixed(1);
     document.getElementById('txtT2Lat').innerText = f.t2_lat.toFixed(6) + '°N';
     document.getElementById('txtT2Lon').innerText = f.t2_lon.toFixed(6) + '°E';
-    document.getElementById('txtT2Sog').innerText = f.t2_sog.toFixed(2) + ' knots';
-    document.getElementById('txtT2Cog').innerText = f.t2_cog.toFixed(1) + '°';
+    document.getElementById('txtT2SogCog').innerText = f.t2_sog.toFixed(2) + ' kts | ' + f.t2_cog.toFixed(1) + '°';
     document.getElementById('txtT2Tactical').innerText = rng2 + ' m / ' + brg2 + '°';
     document.getElementById('txtT2Err').innerText = f.t2_err.toFixed(2) + ' m';
 
