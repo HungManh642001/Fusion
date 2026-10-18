@@ -20,7 +20,7 @@
 | **TPF** (True Positive) | **100.0%** | Hợp nhất 3 nguồn (Hộp đỏ) |
 | **PPF** (Part Positive) | **0.0%** | Hợp nhất 2 nguồn (Hộp vàng) |
 | **Single Modality** | **0.0%** | Đơn cảm biến (Hộp xanh lá) |
-| **Total Instances** | **2** | Tổng thể hiện quỹ đạo |
+| **Total Instances** | **16** | Tổng thể hiện quỹ đạo |
 
 ## 3. Video kết quả
 - **Video tạo ra**: `output/scene01_fused_demo.mp4` (1280x720 @ 25 fps).

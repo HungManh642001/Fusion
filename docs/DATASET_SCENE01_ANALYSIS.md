@@ -346,7 +346,32 @@ Bài báo và mã nguồn phân chia hệ thống đánh giá thành 2 nhóm ch�
 
 ---
 
-## 5. Kết Luận
+## 6. Hướng Dẫn Tính Toán Và Hiệu Chuẩn Ma Trận Trên `scene01`
+
+Hệ thống cung cấp sẵn công cụ thực thi hoàn chỉnh tại [`scripts/calibrate_matrices.py`](file:///mnt/d/Workspace/VTX/Fusion/scripts/calibrate_matrices.py) để tự động hóa việc tính toán các ma trận biến đổi tọa độ theo đúng Công thức (10) và Công thức (6) của bài báo.
+
+### 6.1 Lệnh Thực Thi
+Chạy lệnh sau trên terminal tại thư mục gốc của dự án:
+```bash
+python scripts/calibrate_matrices.py --scene datasets/scene01
+```
+
+### 6.2 Kết Quả Tính Toán Giải Tích Thực Tế
+Công cụ tự động đồng bộ 101 khung quét radar của tàu `413806072` (Radar Track 26 $\leftrightarrow$ Camera Track 3), giải thuật toán hồi quy bình phương tối thiểu và in ra kết quả:
+- **Ma trận Affine $M_{geo2rad}$**: Đạt sai số tái chiếu RMSE chỉ **$1.283\text{ pixel}$** (tương đương **$6.26\text{ mét}$** trên mặt nước sông).
+- **Ma trận Chiếu $F_{rad2vis}$**: Đạt độ trùng khớp IoU **$59.9\%$** giữa cổng dự báo và thân tàu thực tế, với hệ số chính xác:
+  ```python
+  F_RADAR_TO_VISIBLE = np.array([
+      [-1.38157877e+01, -8.78508291e+00,  3.51290525e+04],
+      [ 2.31098562e-01, -2.83131713e-01,  6.87422028e+02],
+      [ 2.00502139e+00,  1.84434496e+00, -5.27668883e+03],
+      [ 2.13125082e-01,  2.51459832e-01, -6.02300267e+02]
+  ], dtype=np.float64)
+  ```
+
+---
+
+## 7. Kết Luận
 
 Phân đoạn `datasets/scene01` trong bộ dữ liệu **WHUT-MSFVessel** là một minh chứng tiêu biểu cho tính hiệu quả của phương pháp tiếp cận hợp nhất đa nguồn:
 1. **Đầu vào**: Hệ thống thu nhận 3 luồng dữ liệu độc lập, không đồng nhất cả về thời gian (từ 40ms đến hàng phút) và không gian (từ tọa độ cầu GPS WGS-84 đến góc nhìn chim bay BEV của Radar và góc nhìn phối cảnh của Camera).
