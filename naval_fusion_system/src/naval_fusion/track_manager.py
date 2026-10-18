@@ -29,6 +29,9 @@ DEFAULT_MAX_MISSES: int = 5  # Số chu kỳ liên tiếp trượt trước khi 
 DEFAULT_MAX_COASTING_TIME: float = 5.0  # Thời gian cho phép chạy quán tính (giây)
 DEFAULT_INITIAL_POS_COV: float = 25.0  # Phương sai ban đầu vị trí (5.0m sigma)^2
 DEFAULT_INITIAL_VEL_COV: float = 100.0  # Phương sai ban đầu vận tốc (10.0m/s sigma)^2
+DEFAULT_HULL_SUPPRESS_DIST: float = 18.0  # Khoảng cách ức chế sinh vết mục tiêu trải rộng (mét)
+DEFAULT_MIN_RANGE_HITS: int = 3  # Số lần đo 2D cự ly tối thiểu để khẳng định vết
+
 
 
 class TrackManager:
@@ -51,6 +54,8 @@ class TrackManager:
         max_coasting_time: float = DEFAULT_MAX_COASTING_TIME,
         initial_pos_cov: float = DEFAULT_INITIAL_POS_COV,
         initial_vel_cov: float = DEFAULT_INITIAL_VEL_COV,
+        hull_suppress_dist: float = DEFAULT_HULL_SUPPRESS_DIST,
+        min_range_hits: int = DEFAULT_MIN_RANGE_HITS,
     ) -> None:
         """Khởi tạo bộ quản lý vòng đời vết mục tiêu.
 
@@ -61,6 +66,8 @@ class TrackManager:
             max_coasting_time: Thời gian trôi tối đa cho phép (giây > 0.0).
             initial_pos_cov: Phương sai vị trí ban đầu (m^2 > 0.0).
             initial_vel_cov: Phương sai vận tốc ban đầu (m^2/s^2 > 0.0).
+            hull_suppress_dist: Khoảng cách tối thiểu giữa vết mới và vết hiện có (mét >= 0.0).
+            min_range_hits: Số lần đo 2D cự ly tối thiểu để cho phép xác nhận vết (>= 1).
 
         Raises:
             ValueError: Nếu bất kỳ tham số cấu hình nào nằm ngoài miền hợp lệ.
@@ -98,15 +105,28 @@ class TrackManager:
             logger.error(msg)
             raise ValueError(msg)
 
+        if hull_suppress_dist < 0.0:
+            msg = f"hull_suppress_dist không được âm, nhận được: {hull_suppress_dist}"
+            logger.error(msg)
+            raise ValueError(msg)
+
+        if min_range_hits < 1:
+            msg = f"min_range_hits phải lớn hơn hoặc bằng 1, nhận được: {min_range_hits}"
+            logger.error(msg)
+            raise ValueError(msg)
+
         self.confirm_hits: int = confirm_hits
         self.window_size: int = window_size
         self.max_misses: int = max_misses
         self.max_coasting_time: float = float(max_coasting_time)
         self.initial_pos_cov: float = float(initial_pos_cov)
         self.initial_vel_cov: float = float(initial_vel_cov)
+        self.hull_suppress_dist: float = float(hull_suppress_dist)
+        self.min_range_hits: int = int(min_range_hits)
 
         self._next_track_id: int = 1
         self._track_history: dict[int, list[bool]] = {}
+        self._range_hits: dict[int, int] = {}
 
     @property
     def next_track_id(self) -> int:
@@ -121,6 +141,7 @@ class TrackManager:
         """
         self._next_track_id = initial_track_id
         self._track_history.clear()
+        self._range_hits.clear()
         logger.info(
             "TrackManager đã được đặt lại, next_track_id bắt đầu từ %d",
             initial_track_id,
@@ -182,8 +203,9 @@ class TrackManager:
         track_id = self._next_track_id
         self._next_track_id += 1
 
-        # Ghi nhận lần trúng đầu tiên vào lịch sử cửa sổ M/N
+        # Ghi nhận lần trúng đầu tiên vào lịch sử cửa sổ M/N và đếm số đo 2D cự ly
         self._track_history[track_id] = [True]
+        self._range_hits[track_id] = 1
 
         new_track = TrackState(
             track_id=track_id,
@@ -239,10 +261,23 @@ class TrackManager:
             track = tracks[track_idx]
             det = detections[det_idx]
 
+            # Khởi tạo bộ đếm đo cự ly nếu vết được tạo từ bên ngoài
+            if track.track_id not in self._range_hits:
+                has_2d = any(
+                    s in (SensorType.RADAR, SensorType.LIDAR)
+                    for s in track.contributing_sensors
+                )
+                self._range_hits[track.track_id] = track.hits if has_2d else 0
+
             track.hits += 1
             track.misses = 0
             track.last_updated = float(current_time)
             track.contributing_sensors.add(det.sensor_type)
+
+            if det.sensor_type in (SensorType.RADAR, SensorType.LIDAR):
+                self._range_hits[track.track_id] = (
+                    self._range_hits.get(track.track_id, 0) + 1
+                )
 
             # Cập nhật lịch sử cửa sổ trượt M/N
             hist = self._track_history.setdefault(track.track_id, [])
@@ -250,21 +285,23 @@ class TrackManager:
             if len(hist) > self.window_size:
                 hist.pop(0)
 
-            # Thăng cấp vết lên CONFIRMED nếu đạt đủ số lần trúng
+            # Thăng cấp vết lên CONFIRMED nếu đạt đủ số lần trúng và số lần đo cự ly 2D
             if not track.is_confirmed:
                 hits_in_window = sum(hist)
-                if (
+                range_hits = self._range_hits.get(track.track_id, 0)
+                if range_hits >= self.min_range_hits and (
                     track.hits >= self.confirm_hits
                     or hits_in_window >= self.confirm_hits
                 ):
                     track.is_confirmed = True
                     logger.info(
                         "Vết track_id=%d đã được XÁC NHẬN với %d lần trúng "
-                        "(%d/%d trong cửa sổ)",
+                        "(%d/%d trong cửa sổ, %d lần đo 2D)",
                         track.track_id,
                         track.hits,
                         hits_in_window,
                         len(hist),
+                        range_hits,
                     )
 
         return tracks
@@ -318,6 +355,7 @@ class TrackManager:
                     self.max_coasting_time,
                 )
                 self._track_history.pop(track.track_id, None)
+                self._range_hits.pop(track.track_id, None)
             else:
                 surviving_tracks.append(track)
 
@@ -426,9 +464,21 @@ class TrackManager:
         )
 
         # Bước 3: Sinh vết nghi ngờ mới từ các điểm đo chưa ghép hợp lệ
+        # Áp dụng cơ chế ức chế không gian theo kích thước thân tàu (Hull-extent suppression):
+        # Không sinh thêm vết mới nếu điểm đo nằm trong bán kính thân tàu của vết đang theo dõi
         for det_idx in actual_unmatched_detections:
             if 0 <= det_idx < len(actual_detections):
-                new_track = self.init_track(actual_detections[det_idx])
+                det = actual_detections[det_idx]
+                if det.sensor_type in (SensorType.RADAR, SensorType.LIDAR):
+                    det_pos = det.measurement_ned[:2]
+                    if any(
+                        float(np.linalg.norm(trk.state_vector[:2] - det_pos))
+                        < self.hull_suppress_dist
+                        for trk in surviving_tracks
+                    ):
+                        continue
+
+                new_track = self.init_track(det)
                 if new_track is not None:
                     surviving_tracks.append(new_track)
 

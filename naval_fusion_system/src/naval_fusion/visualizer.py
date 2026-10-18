@@ -811,15 +811,43 @@ class TacticalVisualizer:
         self,
         t_curr: float,
         confirmed_history: dict[float, list[TrackState]],
+        max_age: float = 3.0,
     ) -> list[TrackState]:
-        """Tìm snapshot vết EKF tại thời điểm gần nhất <= t_curr."""
+        """Tìm snapshot vết EKF tại thời điểm gần nhất <= t_curr kèm ngoại suy mượt mà."""
         if not confirmed_history:
             return []
-        valid_keys = [k for k in confirmed_history.keys() if k <= t_curr + 0.1]
+        valid_keys = [
+            k
+            for k in confirmed_history
+            if k <= t_curr + 0.1 and (t_curr - k) <= max_age
+        ]
         if not valid_keys:
             return []
         closest_key = max(valid_keys)
-        return confirmed_history[closest_key]
+        dt = t_curr - closest_key
+        base_tracks = confirmed_history[closest_key]
+        if dt > 0.01:
+            extrapolated: list[TrackState] = []
+            for trk in base_tracks:
+                pred_n = float(trk.state_vector[0] + trk.state_vector[2] * dt)
+                pred_e = float(trk.state_vector[1] + trk.state_vector[3] * dt)
+                extrapolated.append(
+                    TrackState(
+                        track_id=trk.track_id,
+                        state_vector=np.array(
+                            [pred_n, pred_e, trk.state_vector[2], trk.state_vector[3]],
+                            dtype=np.float64,
+                        ),
+                        covariance=trk.covariance,
+                        last_updated=t_curr,
+                        hits=trk.hits,
+                        misses=trk.misses,
+                        is_confirmed=trk.is_confirmed,
+                        contributing_sensors=set(trk.contributing_sensors),
+                    )
+                )
+            return extrapolated
+        return base_tracks
 
     def _find_nearest_gt(
         self,
@@ -1099,6 +1127,53 @@ function nedToScreen(pn, pe) {{
 const trailHistory = {{}};
 const gtTrailHistory = {{}};
 
+function getActiveTracks(idx) {{
+  const currT = timeline[idx];
+  if (tracksData[currT] && tracksData[currT].length > 0) {{
+    return tracksData[currT];
+  }}
+  for (let i = idx; i >= 0; i--) {{
+    const pastT = timeline[i];
+    if (currT - pastT > 3.0) break;
+    if (tracksData[pastT] && tracksData[pastT].length > 0) {{
+      const dt = currT - pastT;
+      return tracksData[pastT].map(trk => ({{
+        id: trk.id,
+        pos: [
+          trk.pos[0] + trk.vel[0] * dt,
+          trk.pos[1] + trk.vel[1] * dt
+        ],
+        vel: trk.vel,
+        sensors: trk.sensors
+      }}));
+    }}
+  }}
+  return [];
+}}
+
+function getActiveGT(idx) {{
+  const currT = timeline[idx];
+  if (gtData[currT] && gtData[currT].length > 0) return gtData[currT];
+  for (let i = idx; i >= 0; i--) {{
+    const pastT = timeline[i];
+    if (currT - pastT > 2.0) break;
+    if (gtData[pastT] && gtData[pastT].length > 0) return gtData[pastT];
+  }}
+  return [];
+}}
+
+function getOwnPos(idx) {{
+  const tKey = timeline[idx];
+  const dets = detsData[tKey] || [];
+  if (dets.length > 0 && dets[0].own) return dets[0].own;
+  for (let i = idx; i >= 0; i--) {{
+    const pastT = timeline[i];
+    const pDets = detsData[pastT] || [];
+    if (pDets.length > 0 && pDets[0].own) return pDets[0].own;
+  }}
+  return [-28.5, -405.0];
+}}
+
 function draw() {{
   ctx.fillStyle = '#0a1018';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -1108,9 +1183,9 @@ function draw() {{
   const tRel = tKey - t0;
 
   const dets = detsData[tKey] || [];
-  const tracks = tracksData[tKey] || [];
-  const gts = gtData[tKey] || [];
-  const ownPos = (dets.length > 0) ? dets[0].own : [-28.5, -405.0];
+  const tracks = getActiveTracks(currentIdx);
+  const gts = getActiveGT(currentIdx);
+  const ownPos = getOwnPos(currentIdx);
   const [ownX, ownY] = nedToScreen(ownPos[0], ownPos[1]);
 
   // Vẽ lưới tọa độ & Vòng cự ly

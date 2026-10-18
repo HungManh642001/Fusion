@@ -341,8 +341,29 @@ class HeterogeneousEKF:
         # 4. Kalman gain: K = P * H_j^T / S (kích thước 4x1)
         k_gain = (p_cov @ h_jacobian.T) / s_scalar
 
-        # 5. Cập nhật trạng thái: x = x + K * y
-        x_updated = x_state + (k_gain * innovation_angle).flatten()
+        # 5. Cập nhật trạng thái EKF với phép chiếu trực giao tránh trôi cự ly (Zero Range Drift):
+        raw_delta_x = (k_gain * innovation_angle).flatten()
+
+        delta_n = float(x_state[0]) - float(ownship_pos[0])
+        delta_e = float(x_state[1]) - float(ownship_pos[1])
+        d_range = math.hypot(delta_n, delta_e)
+        if d_range > 1e-6:
+            # Vector đơn vị vuông góc với tia nhìn (cross-range direction)
+            u_perp = np.array([-delta_e / d_range, delta_n / d_range], dtype=np.float64)
+            # Trích xuất thành phần dịch chuyển trực giao thực sự từ tia ngắm góc
+            perp_disp = float(np.dot(raw_delta_x[:2], u_perp))
+            # Khống chế dịch chuyển vị trí tối đa 2.0m mỗi bước quét theo giới hạn động học tàu
+            clamped_perp = float(np.clip(perp_disp, -2.0, 2.0))
+            clean_delta_pos = clamped_perp * u_perp
+
+            # Khống chế gia tốc vận tốc tối đa 1.0 m/s mỗi bước quét theo giới hạn động học tàu
+            clean_delta_vel = np.clip(raw_delta_x[2:], -1.0, 1.0)
+
+            x_updated = np.copy(x_state)
+            x_updated[:2] += clean_delta_pos
+            x_updated[2:] += clean_delta_vel
+        else:
+            x_updated = x_state + raw_delta_x
 
         # 6. Cập nhật ma trận hiệp phương sai theo dạng Joseph 1D:
         # P = (I - K * H_j) * P * (I - K * H_j)^T + K * [R_angle] * K^T
