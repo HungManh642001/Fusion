@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_3a3b34bbea26acd69f2574413a3fce1a {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+
+            <style>#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            </style>
+
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
+
+        
+</head>
+<body>
+    
+    
+            <div class="folium-map" id="map_3a3b34bbea26acd69f2574413a3fce1a" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_3a3b34bbea26acd69f2574413a3fce1a = L.map(
+                "map_3a3b34bbea26acd69f2574413a3fce1a",
+                {
+                    center: [36.1408, -5.3536],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 11,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+            L.control.scale().addTo(map_3a3b34bbea26acd69f2574413a3fce1a);
+
+            
+
+        
+    
+            var tile_layer_279ceabc788ee79b74f6ff607ee53b15 = L.tileLayer(
+                "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 20,
+  "maxNativeZoom": 20,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors \u0026copy; \u003ca href=\"https://carto.com/attributions\"\u003eCARTO\u003c/a\u003e",
+  "subdomains": "abcd",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_279ceabc788ee79b74f6ff607ee53b15.addTo(map_3a3b34bbea26acd69f2574413a3fce1a);
+        
+    
+            var marker_987a0c3288b2444ac3c885b8ac2b0ac3 = L.marker(
+                [36.1408, -5.3536],
+                {
+}
+            ).addTo(map_3a3b34bbea26acd69f2574413a3fce1a);
+        
+    
+            var icon_1c3aaa7269cf7afa53e76ee70797860c = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "tower-broadcast",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_8a9df45d4fbd6771419fab070c39250f = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_6edd9d37b9f043f115c0435d885cbd74 = $(`<div id="html_6edd9d37b9f043f115c0435d885cbd74" style="width: 100.0%; height: 100.0%;"><b>Trạm Giám sát Bờ Biển (Radar + ESM)</b><br>Tọa độ: 30.5635°N, 114.3061°E</div>`)[0];
+                popup_8a9df45d4fbd6771419fab070c39250f.setContent(html_6edd9d37b9f043f115c0435d885cbd74);
+            
+        
+
+        marker_987a0c3288b2444ac3c885b8ac2b0ac3.bindPopup(popup_8a9df45d4fbd6771419fab070c39250f)
+        ;
+
+        
+    
+    
+            marker_987a0c3288b2444ac3c885b8ac2b0ac3.bindTooltip(
+                `<div>
+                     Trạm Giám sát Bờ Biển
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_987a0c3288b2444ac3c885b8ac2b0ac3.setIcon(icon_1c3aaa7269cf7afa53e76ee70797860c);
+            
+    
+            var feature_group_2c1ecfa4bd1e752332ba4107c7e1c764 = L.featureGroup(
+                {
+}
+            );
+        
+    
+            var marker_a2eafb8c6de919c5fa5e6f86147cffe9 = L.marker(
+                [36.049441860465116, -5.382829629629629],
+                {
+}
+            ).addTo(feature_group_2c1ecfa4bd1e752332ba4107c7e1c764);
+        
+    
+            var icon_c5a2e81bd82815a385c7cc8e374ae889 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "ship",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_f7497c42abec3dc7f21d6a752039ad98 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_63a5d49983c5abbde1dc832827ea883e = $(`<div id="html_63a5d49983c5abbde1dc832827ea883e" style="width: 100.0%; height: 100.0%;"><div style='font-family: Arial; min-width: 160px;'><b style='color: #10b981;'>HỢP TÁC - HỢP LỆ</b><br><b>MMSI:</b> 413800100<br><b>Chiều dài:</b> 128.1 m<br><b>Tọa độ:</b> 36.0494°N, -5.3828°E</div></div>`)[0];
+                popup_f7497c42abec3dc7f21d6a752039ad98.setContent(html_63a5d49983c5abbde1dc832827ea883e);
+            
+        
+
+        marker_a2eafb8c6de919c5fa5e6f86147cffe9.bindPopup(popup_f7497c42abec3dc7f21d6a752039ad98)
+        ;
+
+        
+    
+    
+            marker_a2eafb8c6de919c5fa5e6f86147cffe9.bindTooltip(
+                `<div>
+                     Tàu Hợp Tác (MMSI: 413800100)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_a2eafb8c6de919c5fa5e6f86147cffe9.setIcon(icon_c5a2e81bd82815a385c7cc8e374ae889);
+            
+    
+            var marker_2143d0eae95713653dff2454554f2b9e = L.marker(
+                [36.03811143410853, -5.432777777777778],
+                {
+}
+            ).addTo(feature_group_2c1ecfa4bd1e752332ba4107c7e1c764);
+        
+    
+            var icon_f5d1cc038e5914eadf86ccb6f7a5b473 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "ship",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_6e0bcf567c03ca02313d0d3a1710b039 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_acb91cb5969286d19fe620e6227208e1 = $(`<div id="html_acb91cb5969286d19fe620e6227208e1" style="width: 100.0%; height: 100.0%;"><div style='font-family: Arial; min-width: 160px;'><b style='color: #10b981;'>HỢP TÁC - HỢP LỆ</b><br><b>MMSI:</b> 413800102<br><b>Chiều dài:</b> 100.0 m<br><b>Tọa độ:</b> 36.0381°N, -5.4328°E</div></div>`)[0];
+                popup_6e0bcf567c03ca02313d0d3a1710b039.setContent(html_acb91cb5969286d19fe620e6227208e1);
+            
+        
+
+        marker_2143d0eae95713653dff2454554f2b9e.bindPopup(popup_6e0bcf567c03ca02313d0d3a1710b039)
+        ;
+
+        
+    
+    
+            marker_2143d0eae95713653dff2454554f2b9e.bindTooltip(
+                `<div>
+                     Tàu Hợp Tác (MMSI: 413800102)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_2143d0eae95713653dff2454554f2b9e.setIcon(icon_f5d1cc038e5914eadf86ccb6f7a5b473);
+            
+    
+            var marker_1569926d70603bd795fd87bbd20faa08 = L.marker(
+                [36.0273973710819, -5.324743961352657],
+                {
+}
+            ).addTo(feature_group_2c1ecfa4bd1e752332ba4107c7e1c764);
+        
+    
+            var icon_417ea992bce13f84f37a260a7f1581f6 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "ship",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_923e8806170d84374a6acd0a51889d66 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_87c4dd1b7d56c0c77e23955a4de3139f = $(`<div id="html_87c4dd1b7d56c0c77e23955a4de3139f" style="width: 100.0%; height: 100.0%;"><div style='font-family: Arial; min-width: 160px;'><b style='color: #10b981;'>HỢP TÁC - HỢP LỆ</b><br><b>MMSI:</b> 413800104<br><b>Chiều dài:</b> 92.2 m<br><b>Tọa độ:</b> 36.0274°N, -5.3247°E</div></div>`)[0];
+                popup_923e8806170d84374a6acd0a51889d66.setContent(html_87c4dd1b7d56c0c77e23955a4de3139f);
+            
+        
+
+        marker_1569926d70603bd795fd87bbd20faa08.bindPopup(popup_923e8806170d84374a6acd0a51889d66)
+        ;
+
+        
+    
+    
+            marker_1569926d70603bd795fd87bbd20faa08.bindTooltip(
+                `<div>
+                     Tàu Hợp Tác (MMSI: 413800104)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_1569926d70603bd795fd87bbd20faa08.setIcon(icon_417ea992bce13f84f37a260a7f1581f6);
+            
+    
+            var marker_4338ecd66d44e11606049bca1b70ec84 = L.marker(
+                [36.07647286821705, -5.288055555555555],
+                {
+}
+            ).addTo(feature_group_2c1ecfa4bd1e752332ba4107c7e1c764);
+        
+    
+            var icon_7c9ed0016a372ee7ee80628ed29e7b05 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "ship",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_2571b0176e2233107977c5bc9908d6fe = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_e21d6bb15aa5587acdb3fbc0998b2b21 = $(`<div id="html_e21d6bb15aa5587acdb3fbc0998b2b21" style="width: 100.0%; height: 100.0%;"><div style='font-family: Arial; min-width: 160px;'><b style='color: #10b981;'>HỢP TÁC - HỢP LỆ</b><br><b>MMSI:</b> 413800106<br><b>Chiều dài:</b> 86.0 m<br><b>Tọa độ:</b> 36.0765°N, -5.2881°E</div></div>`)[0];
+                popup_2571b0176e2233107977c5bc9908d6fe.setContent(html_e21d6bb15aa5587acdb3fbc0998b2b21);
+            
+        
+
+        marker_4338ecd66d44e11606049bca1b70ec84.bindPopup(popup_2571b0176e2233107977c5bc9908d6fe)
+        ;
+
+        
+    
+    
+            marker_4338ecd66d44e11606049bca1b70ec84.bindTooltip(
+                `<div>
+                     Tàu Hợp Tác (MMSI: 413800106)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_4338ecd66d44e11606049bca1b70ec84.setIcon(icon_7c9ed0016a372ee7ee80628ed29e7b05);
+            
+    
+            var marker_6ee6fb4f33dde6d7d28a97eed02a955f = L.marker(
+                [36.02179263565892, -5.312416666666667],
+                {
+}
+            ).addTo(feature_group_2c1ecfa4bd1e752332ba4107c7e1c764);
+        
+    
+            var icon_74f0647ded4c84dbc36cad2c9ce5b146 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "ship",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_8c123f3461cedf8fdda796693a7308bd = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_50e5b225273c7a416f541541298fa2f9 = $(`<div id="html_50e5b225273c7a416f541541298fa2f9" style="width: 100.0%; height: 100.0%;"><div style='font-family: Arial; min-width: 160px;'><b style='color: #10b981;'>HỢP TÁC - HỢP LỆ</b><br><b>MMSI:</b> 413800108<br><b>Chiều dài:</b> 78.1 m<br><b>Tọa độ:</b> 36.0218°N, -5.3124°E</div></div>`)[0];
+                popup_8c123f3461cedf8fdda796693a7308bd.setContent(html_50e5b225273c7a416f541541298fa2f9);
+            
+        
+
+        marker_6ee6fb4f33dde6d7d28a97eed02a955f.bindPopup(popup_8c123f3461cedf8fdda796693a7308bd)
+        ;
+
+        
+    
+    
+            marker_6ee6fb4f33dde6d7d28a97eed02a955f.bindTooltip(
+                `<div>
+                     Tàu Hợp Tác (MMSI: 413800108)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_6ee6fb4f33dde6d7d28a97eed02a955f.setIcon(icon_74f0647ded4c84dbc36cad2c9ce5b146);
+            
+    
+            feature_group_2c1ecfa4bd1e752332ba4107c7e1c764.addTo(map_3a3b34bbea26acd69f2574413a3fce1a);
+        
+    
+            var feature_group_8cd5c932aee81a2fb443c970f83562f3 = L.featureGroup(
+                {
+}
+            );
+        
+    
+            var marker_1e8a9f52d59c53c5e3ef99b4b90dda39 = L.marker(
+                [35.993718429607405, -5.363060931899642],
+                {
+}
+            ).addTo(feature_group_8cd5c932aee81a2fb443c970f83562f3);
+        
+    
+            var icon_025e58c54316ad56e5a4688c5f00ee9a = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "triangle-exclamation",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_0029ed0a101b772550c1ca13c37dc5cc = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_8cb8dd0b0aa2ce06d0a7423825b3b3f8 = $(`<div id="html_8cb8dd0b0aa2ce06d0a7423825b3b3f8" style="width: 100.0%; height: 100.0%;"><div style='font-family: Arial; min-width: 200px;'><b style='color: #ef4444; font-size: 14px;'>🚨 CẢNH BÁO: Dark Vessel (RED ALERT)</b><br><hr style='margin: 4px 0;'><b>Mã phát hiện SAR:</b> #84<br><b>Chiều dài ước tính:</b> 113.1 m<br><b>Trạng thái AIS:</b> <span style='color: red;'>TẮT HOÀN TOÀN</span><br><b>Đánh giá:</b> Unannounced Warship / Submarine Surface / Smuggling Mother Ship<br><b>Tọa độ:</b> 35.9937°N, -5.3631°E</div></div>`)[0];
+                popup_0029ed0a101b772550c1ca13c37dc5cc.setContent(html_8cb8dd0b0aa2ce06d0a7423825b3b3f8);
+            
+        
+
+        marker_1e8a9f52d59c53c5e3ef99b4b90dda39.bindPopup(popup_0029ed0a101b772550c1ca13c37dc5cc)
+        ;
+
+        
+    
+    
+            marker_1e8a9f52d59c53c5e3ef99b4b90dda39.bindTooltip(
+                `<div>
+                     🚨 MỤC TIÊU ĐEN #84 (Dài 113.1m)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_1e8a9f52d59c53c5e3ef99b4b90dda39.setIcon(icon_025e58c54316ad56e5a4688c5f00ee9a);
+            
+    
+            var circle_d23535c260fdeca8093acbb0841c0968 = L.circle(
+                [35.993718429607405, -5.363060931899642],
+                {"bubblingMouseEvents": true, "color": "#ef4444", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ef4444", "fillOpacity": 0.25, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 800, "stroke": true, "weight": 2}
+            ).addTo(feature_group_8cd5c932aee81a2fb443c970f83562f3);
+        
+    
+            var marker_68d6842a403119331515d60ef1aa46fc = L.marker(
+                [36.05119919110212, -5.335236714975846],
+                {
+}
+            ).addTo(feature_group_8cd5c932aee81a2fb443c970f83562f3);
+        
+    
+            var icon_bdc40d2fcf0f8bb17cc7dde0d3bea070 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "triangle-exclamation",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_9d8bfb8cf79a9e6b6cb00097b85e0fc5 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_1384b6c8dee79d12c50de51013e23368 = $(`<div id="html_1384b6c8dee79d12c50de51013e23368" style="width: 100.0%; height: 100.0%;"><div style='font-family: Arial; min-width: 200px;'><b style='color: #ef4444; font-size: 14px;'>🚨 CẢNH BÁO: Dark Vessel (RED ALERT)</b><br><hr style='margin: 4px 0;'><b>Mã phát hiện SAR:</b> #38<br><b>Chiều dài ước tính:</b> 99.0 m<br><b>Trạng thái AIS:</b> <span style='color: red;'>TẮT HOÀN TOÀN</span><br><b>Đánh giá:</b> Unannounced Warship / Submarine Surface / Smuggling Mother Ship<br><b>Tọa độ:</b> 36.0512°N, -5.3352°E</div></div>`)[0];
+                popup_9d8bfb8cf79a9e6b6cb00097b85e0fc5.setContent(html_1384b6c8dee79d12c50de51013e23368);
+            
+        
+
+        marker_68d6842a403119331515d60ef1aa46fc.bindPopup(popup_9d8bfb8cf79a9e6b6cb00097b85e0fc5)
+        ;
+
+        
+    
+    
+            marker_68d6842a403119331515d60ef1aa46fc.bindTooltip(
+                `<div>
+                     🚨 MỤC TIÊU ĐEN #38 (Dài 99.0m)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_68d6842a403119331515d60ef1aa46fc.setIcon(icon_bdc40d2fcf0f8bb17cc7dde0d3bea070);
+            
+    
+            var circle_2785f56bc351f5a62a02f701c2b5d23d = L.circle(
+                [36.05119919110212, -5.335236714975846],
+                {"bubblingMouseEvents": true, "color": "#ef4444", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ef4444", "fillOpacity": 0.25, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 800, "stroke": true, "weight": 2}
+            ).addTo(feature_group_8cd5c932aee81a2fb443c970f83562f3);
+        
+    
+            var marker_da8d38649740648179557852c496c4ec = L.marker(
+                [35.999656529517, -5.443094017094017],
+                {
+}
+            ).addTo(feature_group_8cd5c932aee81a2fb443c970f83562f3);
+        
+    
+            var icon_4c55daabdb16db9f50c0f20aaa137696 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "triangle-exclamation",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_0615f2bc59bbc5cb50fb70e97c0c572e = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_64787850d575c5c9d2d7881301809cb4 = $(`<div id="html_64787850d575c5c9d2d7881301809cb4" style="width: 100.0%; height: 100.0%;"><div style='font-family: Arial; min-width: 200px;'><b style='color: #ef4444; font-size: 14px;'>🚨 CẢNH BÁO: Dark Vessel (RED ALERT)</b><br><hr style='margin: 4px 0;'><b>Mã phát hiện SAR:</b> #81<br><b>Chiều dài ước tính:</b> 89.4 m<br><b>Trạng thái AIS:</b> <span style='color: red;'>TẮT HOÀN TOÀN</span><br><b>Đánh giá:</b> Unannounced Warship / Submarine Surface / Smuggling Mother Ship<br><b>Tọa độ:</b> 35.9997°N, -5.4431°E</div></div>`)[0];
+                popup_0615f2bc59bbc5cb50fb70e97c0c572e.setContent(html_64787850d575c5c9d2d7881301809cb4);
+            
+        
+
+        marker_da8d38649740648179557852c496c4ec.bindPopup(popup_0615f2bc59bbc5cb50fb70e97c0c572e)
+        ;
+
+        
+    
+    
+            marker_da8d38649740648179557852c496c4ec.bindTooltip(
+                `<div>
+                     🚨 MỤC TIÊU ĐEN #81 (Dài 89.4m)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_da8d38649740648179557852c496c4ec.setIcon(icon_4c55daabdb16db9f50c0f20aaa137696);
+            
+    
+            var circle_507c911d85372a96cae2c352b659a636 = L.circle(
+                [35.999656529517, -5.443094017094017],
+                {"bubblingMouseEvents": true, "color": "#ef4444", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ef4444", "fillOpacity": 0.25, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 800, "stroke": true, "weight": 2}
+            ).addTo(feature_group_8cd5c932aee81a2fb443c970f83562f3);
+        
+    
+            var marker_fe95345bceeaf9a6b5e41d34fa3474f3 = L.marker(
+                [36.029948837209304, -5.301533333333333],
+                {
+}
+            ).addTo(feature_group_8cd5c932aee81a2fb443c970f83562f3);
+        
+    
+            var icon_e2d04550242beb625821b57ec80efa78 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "triangle-exclamation",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_6e0d9a7077802b8d2b6b00a5da5c4935 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_f4f024daf116d6e372004dc53a85ee49 = $(`<div id="html_f4f024daf116d6e372004dc53a85ee49" style="width: 100.0%; height: 100.0%;"><div style='font-family: Arial; min-width: 200px;'><b style='color: #ef4444; font-size: 14px;'>🚨 CẢNH BÁO: Dark Vessel (RED ALERT)</b><br><hr style='margin: 4px 0;'><b>Mã phát hiện SAR:</b> #47<br><b>Chiều dài ước tính:</b> 86.0 m<br><b>Trạng thái AIS:</b> <span style='color: red;'>TẮT HOÀN TOÀN</span><br><b>Đánh giá:</b> Unannounced Warship / Submarine Surface / Smuggling Mother Ship<br><b>Tọa độ:</b> 36.0299°N, -5.3015°E</div></div>`)[0];
+                popup_6e0d9a7077802b8d2b6b00a5da5c4935.setContent(html_f4f024daf116d6e372004dc53a85ee49);
+            
+        
+
+        marker_fe95345bceeaf9a6b5e41d34fa3474f3.bindPopup(popup_6e0d9a7077802b8d2b6b00a5da5c4935)
+        ;
+
+        
+    
+    
+            marker_fe95345bceeaf9a6b5e41d34fa3474f3.bindTooltip(
+                `<div>
+                     🚨 MỤC TIÊU ĐEN #47 (Dài 86.0m)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_fe95345bceeaf9a6b5e41d34fa3474f3.setIcon(icon_e2d04550242beb625821b57ec80efa78);
+            
+    
+            var circle_700d23682febf6826b93c117102aed55 = L.circle(
+                [36.029948837209304, -5.301533333333333],
+                {"bubblingMouseEvents": true, "color": "#ef4444", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ef4444", "fillOpacity": 0.25, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 800, "stroke": true, "weight": 2}
+            ).addTo(feature_group_8cd5c932aee81a2fb443c970f83562f3);
+        
+    
+            var marker_67baa25b4c05a8fde6aaee0f2374a509 = L.marker(
+                [36.045118103055174, -5.261921568627451],
+                {
+}
+            ).addTo(feature_group_8cd5c932aee81a2fb443c970f83562f3);
+        
+    
+            var icon_b1d6da41210952facc399984fa117940 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "triangle-exclamation",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_433562c012e3e45ff3e7c70bddaa561b = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_532b3c2d2cf86bb5adcabfa7ac862c38 = $(`<div id="html_532b3c2d2cf86bb5adcabfa7ac862c38" style="width: 100.0%; height: 100.0%;"><div style='font-family: Arial; min-width: 200px;'><b style='color: #ef4444; font-size: 14px;'>🚨 CẢNH BÁO: Dark Vessel (RED ALERT)</b><br><hr style='margin: 4px 0;'><b>Mã phát hiện SAR:</b> #40<br><b>Chiều dài ước tính:</b> 72.1 m<br><b>Trạng thái AIS:</b> <span style='color: red;'>TẮT HOÀN TOÀN</span><br><b>Đánh giá:</b> Unannounced Warship / Submarine Surface / Smuggling Mother Ship<br><b>Tọa độ:</b> 36.0451°N, -5.2619°E</div></div>`)[0];
+                popup_433562c012e3e45ff3e7c70bddaa561b.setContent(html_532b3c2d2cf86bb5adcabfa7ac862c38);
+            
+        
+
+        marker_67baa25b4c05a8fde6aaee0f2374a509.bindPopup(popup_433562c012e3e45ff3e7c70bddaa561b)
+        ;
+
+        
+    
+    
+            marker_67baa25b4c05a8fde6aaee0f2374a509.bindTooltip(
+                `<div>
+                     🚨 MỤC TIÊU ĐEN #40 (Dài 72.1m)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_67baa25b4c05a8fde6aaee0f2374a509.setIcon(icon_b1d6da41210952facc399984fa117940);
+            
+    
+            var circle_9e81842d15360b6d04be127fc342f6f0 = L.circle(
+                [36.045118103055174, -5.261921568627451],
+                {"bubblingMouseEvents": true, "color": "#ef4444", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ef4444", "fillOpacity": 0.25, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 800, "stroke": true, "weight": 2}
+            ).addTo(feature_group_8cd5c932aee81a2fb443c970f83562f3);
+        
+    
+            var marker_5930ff59c50a8e0356a1164c1b5c2e76 = L.marker(
+                [36.03799418604651, -5.302194444444445],
+                {
+}
+            ).addTo(feature_group_8cd5c932aee81a2fb443c970f83562f3);
+        
+    
+            var icon_f888ba37d4159422cf928aff57bd2aee = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "triangle-exclamation",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_07c772fe956433f360455276c0192571 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_a09731c9b0f4cf92c45ca40543bed77b = $(`<div id="html_a09731c9b0f4cf92c45ca40543bed77b" style="width: 100.0%; height: 100.0%;"><div style='font-family: Arial; min-width: 200px;'><b style='color: #ef4444; font-size: 14px;'>🚨 CẢNH BÁO: Dark Vessel (RED ALERT)</b><br><hr style='margin: 4px 0;'><b>Mã phát hiện SAR:</b> #44<br><b>Chiều dài ước tính:</b> 72.1 m<br><b>Trạng thái AIS:</b> <span style='color: red;'>TẮT HOÀN TOÀN</span><br><b>Đánh giá:</b> Unannounced Warship / Submarine Surface / Smuggling Mother Ship<br><b>Tọa độ:</b> 36.0380°N, -5.3022°E</div></div>`)[0];
+                popup_07c772fe956433f360455276c0192571.setContent(html_a09731c9b0f4cf92c45ca40543bed77b);
+            
+        
+
+        marker_5930ff59c50a8e0356a1164c1b5c2e76.bindPopup(popup_07c772fe956433f360455276c0192571)
+        ;
+
+        
+    
+    
+            marker_5930ff59c50a8e0356a1164c1b5c2e76.bindTooltip(
+                `<div>
+                     🚨 MỤC TIÊU ĐEN #44 (Dài 72.1m)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_5930ff59c50a8e0356a1164c1b5c2e76.setIcon(icon_f888ba37d4159422cf928aff57bd2aee);
+            
+    
+            var circle_924957a5a95f89c5b2818476c73034eb = L.circle(
+                [36.03799418604651, -5.302194444444445],
+                {"bubblingMouseEvents": true, "color": "#ef4444", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ef4444", "fillOpacity": 0.25, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 800, "stroke": true, "weight": 2}
+            ).addTo(feature_group_8cd5c932aee81a2fb443c970f83562f3);
+        
+    
+            var marker_75350725967b04fd537d20351fe62958 = L.marker(
+                [36.01116722037652, -5.393650793650794],
+                {
+}
+            ).addTo(feature_group_8cd5c932aee81a2fb443c970f83562f3);
+        
+    
+            var icon_d02cb2e7170773dc4654b721b95a81a6 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "triangle-exclamation",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_64dac0f69af6423869ff34e062eeb343 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_67fa42d549b0de158120841f4aaa5702 = $(`<div id="html_67fa42d549b0de158120841f4aaa5702" style="width: 100.0%; height: 100.0%;"><div style='font-family: Arial; min-width: 200px;'><b style='color: #ef4444; font-size: 14px;'>🚨 CẢNH BÁO: Dark Vessel (RED ALERT)</b><br><hr style='margin: 4px 0;'><b>Mã phát hiện SAR:</b> #65<br><b>Chiều dài ước tính:</b> 72.1 m<br><b>Trạng thái AIS:</b> <span style='color: red;'>TẮT HOÀN TOÀN</span><br><b>Đánh giá:</b> Unannounced Warship / Submarine Surface / Smuggling Mother Ship<br><b>Tọa độ:</b> 36.0112°N, -5.3937°E</div></div>`)[0];
+                popup_64dac0f69af6423869ff34e062eeb343.setContent(html_67fa42d549b0de158120841f4aaa5702);
+            
+        
+
+        marker_75350725967b04fd537d20351fe62958.bindPopup(popup_64dac0f69af6423869ff34e062eeb343)
+        ;
+
+        
+    
+    
+            marker_75350725967b04fd537d20351fe62958.bindTooltip(
+                `<div>
+                     🚨 MỤC TIÊU ĐEN #65 (Dài 72.1m)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_75350725967b04fd537d20351fe62958.setIcon(icon_d02cb2e7170773dc4654b721b95a81a6);
+            
+    
+            var circle_385db074c1a099e88f23c5e67ff816de = L.circle(
+                [36.01116722037652, -5.393650793650794],
+                {"bubblingMouseEvents": true, "color": "#ef4444", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ef4444", "fillOpacity": 0.25, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 800, "stroke": true, "weight": 2}
+            ).addTo(feature_group_8cd5c932aee81a2fb443c970f83562f3);
+        
+    
+            var marker_4145a394408f801ac15128881f11c1fc = L.marker(
+                [36.00390697674419, -5.267135802469136],
+                {
+}
+            ).addTo(feature_group_8cd5c932aee81a2fb443c970f83562f3);
+        
+    
+            var icon_7a4303316e7f036942e001824ce108f4 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "triangle-exclamation",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_8eb8e38ed20fbc9fc1cc0536be6c563a = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_117c6f9194d4c59198957d60b87cf1ae = $(`<div id="html_117c6f9194d4c59198957d60b87cf1ae" style="width: 100.0%; height: 100.0%;"><div style='font-family: Arial; min-width: 200px;'><b style='color: #ef4444; font-size: 14px;'>🚨 CẢNH BÁO: Dark Vessel (RED ALERT)</b><br><hr style='margin: 4px 0;'><b>Mã phát hiện SAR:</b> #76<br><b>Chiều dài ước tính:</b> 64.0 m<br><b>Trạng thái AIS:</b> <span style='color: red;'>TẮT HOÀN TOÀN</span><br><b>Đánh giá:</b> Unannounced Warship / Submarine Surface / Smuggling Mother Ship<br><b>Tọa độ:</b> 36.0039°N, -5.2671°E</div></div>`)[0];
+                popup_8eb8e38ed20fbc9fc1cc0536be6c563a.setContent(html_117c6f9194d4c59198957d60b87cf1ae);
+            
+        
+
+        marker_4145a394408f801ac15128881f11c1fc.bindPopup(popup_8eb8e38ed20fbc9fc1cc0536be6c563a)
+        ;
+
+        
+    
+    
+            marker_4145a394408f801ac15128881f11c1fc.bindTooltip(
+                `<div>
+                     🚨 MỤC TIÊU ĐEN #76 (Dài 64.0m)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_4145a394408f801ac15128881f11c1fc.setIcon(icon_7a4303316e7f036942e001824ce108f4);
+            
+    
+            var circle_6c0ae889992dd320e75d86e30f8c0ec9 = L.circle(
+                [36.00390697674419, -5.267135802469136],
+                {"bubblingMouseEvents": true, "color": "#ef4444", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ef4444", "fillOpacity": 0.25, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 800, "stroke": true, "weight": 2}
+            ).addTo(feature_group_8cd5c932aee81a2fb443c970f83562f3);
+        
+    
+            var marker_dfc6e93e5c79246951fdad7feed31f4b = L.marker(
+                [35.92765005537099, -5.428412698412698],
+                {
+}
+            ).addTo(feature_group_8cd5c932aee81a2fb443c970f83562f3);
+        
+    
+            var icon_fddcef7253321076ab422c5187ab4d40 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "triangle-exclamation",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_ee6477e1802aff44b2ec30eb0085bd43 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_276d74b7d3b007db6eead8f977dd6896 = $(`<div id="html_276d74b7d3b007db6eead8f977dd6896" style="width: 100.0%; height: 100.0%;"><div style='font-family: Arial; min-width: 200px;'><b style='color: #ef4444; font-size: 14px;'>🚨 CẢNH BÁO: Dark Vessel (RED ALERT)</b><br><hr style='margin: 4px 0;'><b>Mã phát hiện SAR:</b> #139<br><b>Chiều dài ước tính:</b> 56.6 m<br><b>Trạng thái AIS:</b> <span style='color: red;'>TẮT HOÀN TOÀN</span><br><b>Đánh giá:</b> Unannounced Warship / Submarine Surface / Smuggling Mother Ship<br><b>Tọa độ:</b> 35.9277°N, -5.4284°E</div></div>`)[0];
+                popup_ee6477e1802aff44b2ec30eb0085bd43.setContent(html_276d74b7d3b007db6eead8f977dd6896);
+            
+        
+
+        marker_dfc6e93e5c79246951fdad7feed31f4b.bindPopup(popup_ee6477e1802aff44b2ec30eb0085bd43)
+        ;
+
+        
+    
+    
+            marker_dfc6e93e5c79246951fdad7feed31f4b.bindTooltip(
+                `<div>
+                     🚨 MỤC TIÊU ĐEN #139 (Dài 56.6m)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_dfc6e93e5c79246951fdad7feed31f4b.setIcon(icon_fddcef7253321076ab422c5187ab4d40);
+            
+    
+            var circle_d5390231cbc1f159cca17fdfcb373f38 = L.circle(
+                [35.92765005537099, -5.428412698412698],
+                {"bubblingMouseEvents": true, "color": "#ef4444", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ef4444", "fillOpacity": 0.25, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 800, "stroke": true, "weight": 2}
+            ).addTo(feature_group_8cd5c932aee81a2fb443c970f83562f3);
+        
+    
+            var marker_957679e3dc49e5bb41b6ca1c677b7755 = L.marker(
+                [36.132581395348836, -5.268777777777778],
+                {
+}
+            ).addTo(feature_group_8cd5c932aee81a2fb443c970f83562f3);
+        
+    
+            var icon_feadcffa7bb9c02e3a4abf2141101caa = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "triangle-exclamation",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_0dd3e6e12fbef199d0bac2d9e19b23e9 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_9666ffb61ab19a6ab99ef3b00fc2da6f = $(`<div id="html_9666ffb61ab19a6ab99ef3b00fc2da6f" style="width: 100.0%; height: 100.0%;"><div style='font-family: Arial; min-width: 200px;'><b style='color: #ef4444; font-size: 14px;'>🚨 CẢNH BÁO: Dark Vessel (RED ALERT)</b><br><hr style='margin: 4px 0;'><b>Mã phát hiện SAR:</b> #6<br><b>Chiều dài ước tính:</b> 50.0 m<br><b>Trạng thái AIS:</b> <span style='color: red;'>TẮT HOÀN TOÀN</span><br><b>Đánh giá:</b> Unannounced Warship / Submarine Surface / Smuggling Mother Ship<br><b>Tọa độ:</b> 36.1326°N, -5.2688°E</div></div>`)[0];
+                popup_0dd3e6e12fbef199d0bac2d9e19b23e9.setContent(html_9666ffb61ab19a6ab99ef3b00fc2da6f);
+            
+        
+
+        marker_957679e3dc49e5bb41b6ca1c677b7755.bindPopup(popup_0dd3e6e12fbef199d0bac2d9e19b23e9)
+        ;
+
+        
+    
+    
+            marker_957679e3dc49e5bb41b6ca1c677b7755.bindTooltip(
+                `<div>
+                     🚨 MỤC TIÊU ĐEN #6 (Dài 50.0m)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_957679e3dc49e5bb41b6ca1c677b7755.setIcon(icon_feadcffa7bb9c02e3a4abf2141101caa);
+            
+    
+            var circle_999d259b6827d1e8ed3cbdfcf117b005 = L.circle(
+                [36.132581395348836, -5.268777777777778],
+                {"bubblingMouseEvents": true, "color": "#ef4444", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ef4444", "fillOpacity": 0.25, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 800, "stroke": true, "weight": 2}
+            ).addTo(feature_group_8cd5c932aee81a2fb443c970f83562f3);
+        
+    
+            var marker_4b9dd391b179be4c2b66024e925a9371 = L.marker(
+                [36.00100775193798, -5.462355555555556],
+                {
+}
+            ).addTo(feature_group_8cd5c932aee81a2fb443c970f83562f3);
+        
+    
+            var icon_0261b2851666b774978e193a398df1f4 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "triangle-exclamation",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_7e8bcd0f9036b7ea3df7a3739d2ca4f0 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_842913241aa15590f849d80122f22f7c = $(`<div id="html_842913241aa15590f849d80122f22f7c" style="width: 100.0%; height: 100.0%;"><div style='font-family: Arial; min-width: 200px;'><b style='color: #ef4444; font-size: 14px;'>🚨 CẢNH BÁO: Dark Vessel (RED ALERT)</b><br><hr style='margin: 4px 0;'><b>Mã phát hiện SAR:</b> #78<br><b>Chiều dài ước tính:</b> 50.0 m<br><b>Trạng thái AIS:</b> <span style='color: red;'>TẮT HOÀN TOÀN</span><br><b>Đánh giá:</b> Unannounced Warship / Submarine Surface / Smuggling Mother Ship<br><b>Tọa độ:</b> 36.0010°N, -5.4624°E</div></div>`)[0];
+                popup_7e8bcd0f9036b7ea3df7a3739d2ca4f0.setContent(html_842913241aa15590f849d80122f22f7c);
+            
+        
+
+        marker_4b9dd391b179be4c2b66024e925a9371.bindPopup(popup_7e8bcd0f9036b7ea3df7a3739d2ca4f0)
+        ;
+
+        
+    
+    
+            marker_4b9dd391b179be4c2b66024e925a9371.bindTooltip(
+                `<div>
+                     🚨 MỤC TIÊU ĐEN #78 (Dài 50.0m)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_4b9dd391b179be4c2b66024e925a9371.setIcon(icon_0261b2851666b774978e193a398df1f4);
+            
+    
+            var circle_77cda921a488c99f49e7df29fdfb1643 = L.circle(
+                [36.00100775193798, -5.462355555555556],
+                {"bubblingMouseEvents": true, "color": "#ef4444", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ef4444", "fillOpacity": 0.25, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 800, "stroke": true, "weight": 2}
+            ).addTo(feature_group_8cd5c932aee81a2fb443c970f83562f3);
+        
+    
+            feature_group_8cd5c932aee81a2fb443c970f83562f3.addTo(map_3a3b34bbea26acd69f2574413a3fce1a);
+        
+    
+            var feature_group_834ec917f6d22670169a8469373bcfcc = L.featureGroup(
+                {
+}
+            );
+        
+    
+            var marker_c3b884cae407d0333a2d0cc188bfcc9c = L.marker(
+                [36.03430095587262, -5.484901795835489],
+                {
+}
+            ).addTo(feature_group_834ec917f6d22670169a8469373bcfcc);
+        
+    
+            var icon_644149a2ce20e53906db5c97eea2cc7b = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "ghost",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_99c44b9e09121b2b21792861cf6ac3dd = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_692adf7f77891948a9601123c957f5ed = $(`<div id="html_692adf7f77891948a9601123c957f5ed" style="width: 100.0%; height: 100.0%;"><div style='font-family: Arial; min-width: 180px;'><b style='color: #eab308; font-size: 13px;'>⚠️ CẢNH BÁO: Ghost Ship (YELLOW ALERT)</b><br><hr style='margin: 4px 0;'><b>MMSI Giả Mạo:</b> 999123456<br><b>Vận tốc khai báo:</b> 14.5 kts<br><b>Phản xạ SAR:</b> <span style='color: orange;'>KHÔNG CÓ TÀU THỰC</span><br><b>Phân loại:</b> Tác chiến điện tử / Đánh lừa AIS</div></div>`)[0];
+                popup_99c44b9e09121b2b21792861cf6ac3dd.setContent(html_692adf7f77891948a9601123c957f5ed);
+            
+        
+
+        marker_c3b884cae407d0333a2d0cc188bfcc9c.bindPopup(popup_99c44b9e09121b2b21792861cf6ac3dd)
+        ;
+
+        
+    
+    
+            marker_c3b884cae407d0333a2d0cc188bfcc9c.bindTooltip(
+                `<div>
+                     ⚠️ TÀU MA AIS (999123456)
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_c3b884cae407d0333a2d0cc188bfcc9c.setIcon(icon_644149a2ce20e53906db5c97eea2cc7b);
+            
+    
+            feature_group_834ec917f6d22670169a8469373bcfcc.addTo(map_3a3b34bbea26acd69f2574413a3fce1a);
+        
+    
+            var layer_control_edc0dce69b89b4a87ffa85c741a5a861_layers = {
+                base_layers : {
+                    "cartodbdarkmatter" : tile_layer_279ceabc788ee79b74f6ff607ee53b15,
+                },
+                overlays :  {
+                    "T\u00e0u H\u1ee3p T\u00e1c (AIS H\u1ee3p L\u1ec7)" : feature_group_2c1ecfa4bd1e752332ba4107c7e1c764,
+                    "M\u1ee4C TI\u00caU \u0110EN (T\u1eaeT AIS / T\u00c0U CHI\u1ebeN)" : feature_group_8cd5c932aee81a2fb443c970f83562f3,
+                    "T\u00c0U MA GI\u1ea2 M\u1ea0O (AIS KH\u00d4NG C\u00d3 TH\u1ef0C)" : feature_group_834ec917f6d22670169a8469373bcfcc,
+                },
+            };
+            let layer_control_edc0dce69b89b4a87ffa85c741a5a861 = L.control.layers(
+                layer_control_edc0dce69b89b4a87ffa85c741a5a861_layers.base_layers,
+                layer_control_edc0dce69b89b4a87ffa85c741a5a861_layers.overlays,
+                {
+  "position": "topright",
+  "collapsed": true,
+  "autoZIndex": true,
+}
+            ).addTo(map_3a3b34bbea26acd69f2574413a3fce1a);
+
+        
+</script>
+</html>
