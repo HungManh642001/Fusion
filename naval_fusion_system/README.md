@@ -1,6 +1,7 @@
 # Phân Hệ Hợp Nhất Dữ Liệu Động Học Tàu Chiến Quân Sự (Naval Warship Kinematic Multi-Sensor Fusion Engine)
 
-> **Dự án Độc Lập**: Phân hệ này được thiết kế và đóng gói độc lập hoàn toàn (`naval_fusion_system/`), kế thừa và xử lý tập dữ liệu chuẩn hải quân thực tế **Autoferry Sensor Fusion Benchmark Dataset**, phục vụ bài toán giám sát, nhận diện bức tranh tình huống mặt biển và tác chiến hải quân.
+> **Dự án Độc Lập**: Phân hệ này được thiết kế và đóng gói độc lập hoàn toàn (`naval_fusion_system/`), kế thừa và xử lý tập dữ liệu chuẩn hải quân thực tế **Autoferry Sensor Fusion Benchmark Dataset**, phục vụ bài toán giám sát, nhận diện bức tranh tình huống mặt biển và tác chiến hải quân.  
+> 📖 **Tài liệu tham khảo chuyên sâu**: Xem toàn bộ phân tích chi tiết luồng xử lý, sơ đồ activity, giải thích mã nguồn và toán học tại [`docs/SYSTEM_ARCHITECTURE_AND_CODE_WALKTHROUGH.md`](file:///mnt/d/Workspace/VTX/Fusion/naval_fusion_system/docs/SYSTEM_ARCHITECTURE_AND_CODE_WALKTHROUGH.md).
 
 ---
 
