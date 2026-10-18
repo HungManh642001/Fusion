@@ -1,6 +1,8 @@
 datasets/
 docs/samples/*.mp4
 output/*.mp4
+naval_fusion_system/output/*.mp4
+*.mp4
 __pycache__/
 *.pyc
 .pytest_cache/

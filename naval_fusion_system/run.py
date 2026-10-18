@@ -56,6 +56,21 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
         help="Chạy kiểm chứng tự động toàn bộ các kịch bản trong thư mục tập dữ liệu.",
     )
     parser.add_argument(
+        "--video",
+        action="store_true",
+        help="Kết xuất video MP4 mô phỏng giao diện radar tác chiến thời gian thực.",
+    )
+    parser.add_argument(
+        "--html",
+        action="store_true",
+        help="Tạo bảng điều khiển chiến thuật tương tác trên trình duyệt (HTML5 Canvas).",
+    )
+    parser.add_argument(
+        "--snapshot",
+        action="store_true",
+        help="Chụp ảnh snapshot chiến thuật PNG độ nét cao tại thời điểm then chốt.",
+    )
+    parser.add_argument(
         "--dataset-dir",
         type=str,
         default="datasets/Autoferry-sensor_fusion_dataset",
@@ -255,7 +270,7 @@ def main(argv: Sequence[str] | None = None) -> int:
 
         # Mặc định hoặc có cờ --eval: chạy hợp nhất toàn diện và đánh giá
         print(f"Bắt đầu thực thi hợp nhất động học trên {scen_name}...")
-        _, metrics = pipeline.run(scenario_path, enabled_sensors=None)
+        history, metrics = pipeline.run(scenario_path, enabled_sensors=None)
         single_result = {
             "Hợp nhất Toàn diện (Radar + IR + EO + LiDAR)": metrics,
         }
@@ -263,6 +278,30 @@ def main(argv: Sequence[str] | None = None) -> int:
             single_result, scenario_name=scen_name
         )
         write_and_print_report(report_md, output_path)
+
+        # Xử lý các yêu cầu trực quan hóa video / html / snapshot
+        if args.video or args.html or args.snapshot:
+            from naval_fusion.visualizer import TacticalVisualizer
+
+            visualizer = TacticalVisualizer()
+            dets, gt = pipeline.loader.load_scenario(scenario_path)
+
+            if args.snapshot:
+                snap_path = output_path.parent / f"{scen_name}_tactical_snapshot.png"
+                visualizer.render_snapshot(dets, history, gt, output_path=snap_path)
+                print(f"-> Ảnh chụp chiến thuật đã lưu tại: {snap_path}")
+
+            if args.video:
+                vid_path = output_path.parent / f"{scen_name}_tactical_display.mp4"
+                print(f"-> Đang kết xuất video tác chiến thời gian thực: {vid_path}...")
+                visualizer.render_video(dets, history, gt, output_path=vid_path)
+                print(f"-> Video tác chiến hoàn tất: {vid_path}")
+
+            if args.html:
+                html_path = output_path.parent / f"{scen_name}_tactical_console.html"
+                visualizer.render_html_console(dets, history, gt, output_path=html_path)
+                print(f"-> Bảng điều khiển tác chiến web hoàn tất: {html_path}")
+
         return 0
 
     except Exception as exc:

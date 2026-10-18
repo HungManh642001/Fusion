@@ -14,6 +14,7 @@ from naval_fusion.models import (
     TrackState,
 )
 from naval_fusion.pipeline import NavalFusionPipeline
+from naval_fusion.visualizer import TacticalVisualizer
 
 __all__ = [
     "AutoferryLoader",
@@ -22,6 +23,7 @@ __all__ = [
     "NavalFusionPipeline",
     "OwnshipState",
     "SensorType",
+    "TacticalVisualizer",
     "TrackState",
 ]
 
