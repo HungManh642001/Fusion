@@ -224,9 +224,12 @@ def generate_colab_notebook(output_path: str = "notebooks/naval_isr_phase3_gpu_t
     return output_path
 
 
+DEFAULT_NB = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "notebooks", "naval_isr_phase3_gpu_training.ipynb"))
+
+
 def main():
     parser = argparse.ArgumentParser(description="Export Phase 3 ST-GNN GPU Colab Notebook.")
-    parser.add_argument("--output", type=str, default="notebooks/naval_isr_phase3_gpu_training.ipynb")
+    parser.add_argument("--output", type=str, default=DEFAULT_NB)
     args = parser.parse_args()
 
     out_file = args.output

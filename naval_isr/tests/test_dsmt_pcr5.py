@@ -1,7 +1,7 @@
 import pytest
 import numpy as np
-from src.naval_isr.ai_inference.dsmt_fusion import DSmTEngine
-from src.naval_isr.ai_inference.threat_assessor import ThreatAssessor
+from naval_isr.ai_inference.dsmt_fusion import DSmTEngine
+from naval_isr.ai_inference.threat_assessor import ThreatAssessor
 
 def test_pcr5_zero_paradox_high_conflict():
     engine = DSmTEngine(classes=["Destroyer", "Frigate", "Commercial"])

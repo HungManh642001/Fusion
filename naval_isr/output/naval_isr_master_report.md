@@ -13,7 +13,7 @@
 | :--- | :--- | :--- | :---: | :--- |
 | **Giai đoạn 1** | Radar bờ + ESM + AIS<br>(IMM Filter + JPDA + Covariance Intersection) | Sai số OSPA ($c=100m, p=1$)<br>RMSE Vị trí | **78.07 m**<br>**360.39 m** | Bám bắt ổn định tàu cơ động quay vòng $45^\circ$ mà không bị lạc vết (track divergence) |
 | **Giai đoạn 2** | Vệ tinh SAR viễn thám + AIS<br>(CA-CFAR + Geodesic Dead-Reckoning) | Precision Dark Vessel<br>Recall Dark Vessel<br>F1-Score | **100.0%**<br>**100.0%**<br>**100.0%** | Vạch trần 100% tàu chiến tắt định danh AIS và phát hiện tàu ma giả mạo AIS |
-| **Giai đoạn 3** | PyTorch ST-GNN + DSmT PCR5<br>(Heterogeneous Graph Attention) | Độ trễ suy luận CPU<br>Khử nghịch lý Zadeh | **0.45 ms**<br>**Tuyệt đối** | Đạt thời gian thực (< 10ms); giải quyết triệt để mâu thuẫn giữa ESM và SAR |
+| **Giai đoạn 3** | PyTorch ST-GNN + DSmT PCR5<br>(Heterogeneous Graph Attention) | Độ trễ suy luận CPU<br>Khử nghịch lý Zadeh | **2.03 ms**<br>**Tuyệt đối** | Đạt thời gian thực (< 10ms); giải quyết triệt để mâu thuẫn giữa ESM và SAR |
 
 ## 2. Chi Tiết Kỹ Thuật Từng Giai Đoạn
 

@@ -1,7 +1,7 @@
 import pytest
 import numpy as np
-from src.naval_isr.sar_recon.ais_correlation import AISCorrelationEngine
-from src.naval_isr.sar_recon.sar_preprocessor import SARPreprocessor
+from naval_isr.sar_recon.ais_correlation import AISCorrelationEngine
+from naval_isr.sar_recon.sar_preprocessor import SARPreprocessor
 
 def test_ais_extrapolation_matching():
     engine = AISCorrelationEngine()

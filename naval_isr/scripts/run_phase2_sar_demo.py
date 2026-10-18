@@ -16,18 +16,20 @@ import sys
 import argparse
 
 # Ensure project root is in sys.path
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src")))
 
 import numpy as np
-from src.naval_isr.sar_recon.sar_preprocessor import SARPreprocessor
-from src.naval_isr.sar_recon.ais_correlation import AISCorrelationEngine
-from src.naval_isr.sar_recon.dark_vessel_detector import DarkVesselDetector
-from src.naval_isr.visualization.gis_map_renderer import GISTacticalMapRenderer
+from naval_isr.sar_recon.sar_preprocessor import SARPreprocessor
+from naval_isr.sar_recon.ais_correlation import AISCorrelationEngine
+from naval_isr.sar_recon.dark_vessel_detector import DarkVesselDetector
+from naval_isr.visualization.gis_map_renderer import GISTacticalMapRenderer
 
+
+DEFAULT_OUTPUT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "output"))
 
 def main():
     parser = argparse.ArgumentParser(description="Run Phase 2 SAR Reconnaissance & Dark Vessel Demo.")
-    parser.add_argument("--output", type=str, default="output/naval_isr", help="Directory to save artifacts.")
+    parser.add_argument("--output", type=str, default=DEFAULT_OUTPUT, help="Directory to save artifacts.")
     args = parser.parse_args()
 
     os.makedirs(args.output, exist_ok=True)

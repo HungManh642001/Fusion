@@ -1,7 +1,7 @@
 import pytest
 import numpy as np
-from src.naval_isr.simulation.active_passive_jpda import ActivePassiveJPDA
-from src.naval_isr.simulation.imm_tracker import IMMTracker
+from naval_isr.simulation.active_passive_jpda import ActivePassiveJPDA
+from naval_isr.simulation.imm_tracker import IMMTracker
 
 def test_bearing_only_gating_match():
     jpda = ActivePassiveJPDA(gate_threshold=9.0)

@@ -15,20 +15,20 @@ import time
 import argparse
 
 # Ensure project root is in sys.path
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src")))
 
 import numpy as np
 import torch
 
-from src.naval_isr.simulation.coastal_scenario import CoastalScenarioSimulator
-from src.naval_isr.simulation.imm_tracker import IMMTracker
-from src.naval_isr.simulation.active_passive_jpda import ActivePassiveJPDA
-from src.naval_isr.simulation.covariance_intersect import fuse_covariance_intersection, compute_ospa_metric
-from src.naval_isr.sar_recon.ais_correlation import AISCorrelationEngine
-from src.naval_isr.sar_recon.dark_vessel_detector import DarkVesselDetector
-from src.naval_isr.ai_inference.st_gnn_model import SpatioTemporalGNN
-from src.naval_isr.ai_inference.dsmt_fusion import DSmTEngine
-from src.naval_isr.ai_inference.threat_assessor import ThreatAssessor
+from naval_isr.simulation.coastal_scenario import CoastalScenarioSimulator
+from naval_isr.simulation.imm_tracker import IMMTracker
+from naval_isr.simulation.active_passive_jpda import ActivePassiveJPDA
+from naval_isr.simulation.covariance_intersect import fuse_covariance_intersection, compute_ospa_metric
+from naval_isr.sar_recon.ais_correlation import AISCorrelationEngine
+from naval_isr.sar_recon.dark_vessel_detector import DarkVesselDetector
+from naval_isr.ai_inference.st_gnn_model import SpatioTemporalGNN
+from naval_isr.ai_inference.dsmt_fusion import DSmTEngine
+from naval_isr.ai_inference.threat_assessor import ThreatAssessor
 
 
 def evaluate_phase1_tracking(duration: int = 120, dt: float = 2.0):
@@ -163,9 +163,12 @@ def evaluate_phase3_ai():
     }
 
 
+DEFAULT_OUTPUT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "output"))
+
+
 def main():
     parser = argparse.ArgumentParser(description="Evaluate End-to-End Naval ISR Metrics.")
-    parser.add_argument("--output", type=str, default="output/naval_isr", help="Directory to save report.")
+    parser.add_argument("--output", type=str, default=DEFAULT_OUTPUT, help="Directory to save report.")
     args = parser.parse_args()
 
     os.makedirs(args.output, exist_ok=True)

@@ -2,7 +2,7 @@ import pytest
 import torch
 import json
 import os
-from src.naval_isr.ai_inference.st_gnn_model import SpatioTemporalGNN
+from naval_isr.ai_inference.st_gnn_model import SpatioTemporalGNN
 from scripts.export_phase3_colab import generate_colab_notebook
 
 def test_st_gnn_forward_cpu():

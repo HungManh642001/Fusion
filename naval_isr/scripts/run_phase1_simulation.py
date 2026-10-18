@@ -13,20 +13,22 @@ import sys
 import argparse
 
 # Ensure project root is in sys.path
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src")))
 
 import numpy as np
-from src.naval_isr.simulation.coastal_scenario import CoastalScenarioSimulator
-from src.naval_isr.simulation.imm_tracker import IMMTracker
-from src.naval_isr.simulation.active_passive_jpda import ActivePassiveJPDA
-from src.naval_isr.simulation.covariance_intersect import fuse_covariance_intersection, compute_ospa_metric
-from src.naval_isr.visualization.tactical_plotter import TacticalPlotter
+from naval_isr.simulation.coastal_scenario import CoastalScenarioSimulator
+from naval_isr.simulation.imm_tracker import IMMTracker
+from naval_isr.simulation.active_passive_jpda import ActivePassiveJPDA
+from naval_isr.simulation.covariance_intersect import fuse_covariance_intersection, compute_ospa_metric
+from naval_isr.visualization.tactical_plotter import TacticalPlotter
 
 
+
+DEFAULT_OUTPUT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "output"))
 
 def main():
     parser = argparse.ArgumentParser(description="Run Phase 1 Coastal Multi-Sensor Fusion Simulation.")
-    parser.add_argument("--output", type=str, default="output/naval_isr", help="Directory to save artifacts.")
+    parser.add_argument("--output", type=str, default=DEFAULT_OUTPUT, help="Directory to save artifacts.")
     parser.add_argument("--duration", type=int, default=150, help="Simulation duration in seconds.")
     args = parser.parse_args()
 

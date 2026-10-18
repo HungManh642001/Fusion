@@ -1,7 +1,7 @@
 import pytest
 import os
-from src.naval_isr.sar_recon.dark_vessel_detector import DarkVesselDetector
-from src.naval_isr.visualization.gis_map_renderer import GISTacticalMapRenderer
+from naval_isr.sar_recon.dark_vessel_detector import DarkVesselDetector
+from naval_isr.visualization.gis_map_renderer import GISTacticalMapRenderer
 
 def test_dark_vessel_flagging():
     detector = DarkVesselDetector(min_warship_length_m=50.0)

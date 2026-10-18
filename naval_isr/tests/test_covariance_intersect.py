@@ -1,6 +1,6 @@
 import pytest
 import numpy as np
-from src.naval_isr.simulation.covariance_intersect import fuse_covariance_intersection, compute_ospa_metric
+from naval_isr.simulation.covariance_intersect import fuse_covariance_intersection, compute_ospa_metric
 
 def test_ci_optimal_bounding():
     x1 = np.array([100.0, 10.0])

@@ -1,6 +1,6 @@
 import pytest
 import numpy as np
-from src.naval_isr.simulation.coastal_scenario import CoastalScenarioSimulator, TacticalVessel
+from naval_isr.simulation.coastal_scenario import CoastalScenarioSimulator, TacticalVessel
 
 def test_coastal_scenario_generation():
     sim = CoastalScenarioSimulator()
