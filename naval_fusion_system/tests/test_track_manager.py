@@ -6,8 +6,8 @@ Tuân thủ kiến trúc kiểm thử AAA (Arrange, Act, Assert) và quy chuẩn
 import numpy as np
 import pytest
 
-from src.naval_fusion.models import Detection, SensorType, TrackState
-from src.naval_fusion.track_manager import (
+from naval_fusion.models import Detection, SensorType, TrackState
+from naval_fusion.track_manager import (
     DEFAULT_CONFIRM_HITS,
     DEFAULT_MAX_COASTING_TIME,
     DEFAULT_MAX_MISSES,

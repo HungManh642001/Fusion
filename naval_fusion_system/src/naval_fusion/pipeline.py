@@ -15,12 +15,12 @@ from pathlib import Path
 
 import numpy as np
 
-from src.naval_fusion.association import DataAssociator
-from src.naval_fusion.ekf_tracker import HeterogeneousEKF
-from src.naval_fusion.evaluator import NavalEvaluator
-from src.naval_fusion.loader import AutoferryLoader
-from src.naval_fusion.models import Detection, EvaluationMetrics, SensorType, TrackState
-from src.naval_fusion.track_manager import TrackManager
+from naval_fusion.association import DataAssociator
+from naval_fusion.ekf_tracker import HeterogeneousEKF
+from naval_fusion.evaluator import NavalEvaluator
+from naval_fusion.loader import AutoferryLoader
+from naval_fusion.models import Detection, EvaluationMetrics, SensorType, TrackState
+from naval_fusion.track_manager import TrackManager
 
 logger = logging.getLogger(__name__)
 

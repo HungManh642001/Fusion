@@ -7,7 +7,7 @@ về khoảng [-pi, pi], và tính góc phương vị từ tàu mẹ tới mục
 import numpy as np
 import pytest
 
-from src.naval_fusion.coord_ned import (
+from naval_fusion.coord_ned import (
     calc_bearing_from_ownship,
     compensate_ownship_2d,
     normalize_bearing_rad,

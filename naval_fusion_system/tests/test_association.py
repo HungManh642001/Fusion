@@ -13,8 +13,8 @@ import math
 import numpy as np
 import pytest
 
-from src.naval_fusion.association import DataAssociator
-from src.naval_fusion.models import Detection, SensorType, TrackState
+from naval_fusion.association import DataAssociator
+from naval_fusion.models import Detection, SensorType, TrackState
 
 
 @pytest.fixture

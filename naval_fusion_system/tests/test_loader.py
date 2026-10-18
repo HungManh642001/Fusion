@@ -11,14 +11,20 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from src.naval_fusion.loader import AutoferryLoader
-from src.naval_fusion.models import Detection, SensorType
+from naval_fusion.loader import AutoferryLoader
+from naval_fusion.models import Detection, SensorType
 
 
 def test_load_scenario2_valid_returns_detections_and_ground_truth() -> None:
     """Kiểm tra nạp kịch bản scenario2 thực tế từ thư mục dataset."""
     # Arrange
-    scenario_dir = Path("datasets/Autoferry-sensor_fusion_dataset/scenario2")
+    candidates = [
+        Path("datasets/Autoferry-sensor_fusion_dataset/scenario2"),
+        Path("../datasets/Autoferry-sensor_fusion_dataset/scenario2"),
+        Path(__file__).resolve().parent.parent.parent
+        / "datasets/Autoferry-sensor_fusion_dataset/scenario2",
+    ]
+    scenario_dir = next((c for c in candidates if c.is_dir()), candidates[0])
     if not scenario_dir.exists():
         pytest.skip("Autoferry scenario2 không tồn tại trên hệ thống kiểm thử.")
 

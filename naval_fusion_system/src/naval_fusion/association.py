@@ -19,8 +19,8 @@ from typing import cast
 import numpy as np
 from scipy.optimize import linear_sum_assignment  # pyright: ignore[reportUnknownVariableType]
 
-from src.naval_fusion.coord_ned import normalize_bearing_rad
-from src.naval_fusion.models import Detection, SensorType, TrackState
+from naval_fusion.coord_ned import normalize_bearing_rad
+from naval_fusion.models import Detection, SensorType, TrackState
 
 logger = logging.getLogger(__name__)
 

@@ -19,7 +19,7 @@ from scipy.optimize import (
     linear_sum_assignment,  # pyright: ignore[reportUnknownVariableType]
 )
 
-from src.naval_fusion.models import EvaluationMetrics, TrackState
+from naval_fusion.models import EvaluationMetrics, TrackState
 
 logger = logging.getLogger(__name__)
 

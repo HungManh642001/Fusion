@@ -9,8 +9,8 @@ Camera ảnh nhiệt IR / Quang điện tử EO.
 import numpy as np
 import pytest
 
-from src.naval_fusion.ekf_tracker import HeterogeneousEKF
-from src.naval_fusion.models import SensorType, TrackState
+from naval_fusion.ekf_tracker import HeterogeneousEKF
+from naval_fusion.models import SensorType, TrackState
 
 
 @pytest.fixture

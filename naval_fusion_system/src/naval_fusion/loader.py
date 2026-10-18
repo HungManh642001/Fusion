@@ -14,8 +14,8 @@ from typing import Any
 
 import numpy as np
 
-from src.naval_fusion.coord_ned import compensate_ownship_2d, normalize_bearing_rad
-from src.naval_fusion.models import Detection, SensorType
+from naval_fusion.coord_ned import compensate_ownship_2d, normalize_bearing_rad
+from naval_fusion.models import Detection, SensorType
 
 logger = logging.getLogger(__name__)
 

@@ -11,9 +11,9 @@ from typing import Any, cast
 import numpy as np
 import pytest
 
-from src.naval_fusion.evaluator import NavalEvaluator
-from src.naval_fusion.loader import AutoferryLoader
-from src.naval_fusion.models import EvaluationMetrics, SensorType, TrackState
+from naval_fusion.evaluator import NavalEvaluator
+from naval_fusion.loader import AutoferryLoader
+from naval_fusion.models import EvaluationMetrics, SensorType, TrackState
 
 
 def test_calc_rmse_pos_valid_data_returns_correct_rmse() -> None:
@@ -433,7 +433,13 @@ def test_generate_markdown_report_empty_results_returns_placeholder() -> None:
 def test_evaluate_tracks_on_autoferry_scenario2_sample() -> None:
     """Kiểm tra tích hợp đánh giá trên kịch bản thực tế Autoferry scenario2."""
     # Arrange
-    scenario_dir = Path("datasets/Autoferry-sensor_fusion_dataset/scenario2")
+    candidates = [
+        Path("datasets/Autoferry-sensor_fusion_dataset/scenario2"),
+        Path("../datasets/Autoferry-sensor_fusion_dataset/scenario2"),
+        Path(__file__).resolve().parent.parent.parent
+        / "datasets/Autoferry-sensor_fusion_dataset/scenario2",
+    ]
+    scenario_dir = next((c for c in candidates if c.is_dir()), candidates[0])
     if not scenario_dir.exists():
         pytest.skip("Autoferry scenario2 không tồn tại.")
 

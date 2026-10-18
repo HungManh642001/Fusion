@@ -18,7 +18,7 @@ from typing import cast
 
 import numpy as np
 
-from src.naval_fusion.models import Detection, SensorType, TrackState
+from naval_fusion.models import Detection, SensorType, TrackState
 
 logger = logging.getLogger(__name__)
 

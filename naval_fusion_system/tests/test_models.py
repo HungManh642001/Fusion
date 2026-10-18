@@ -8,7 +8,7 @@ from dataclasses import FrozenInstanceError
 import numpy as np
 import pytest
 
-from src.naval_fusion.models import (
+from naval_fusion.models import (
     Detection,
     EvaluationMetrics,
     OwnshipState,

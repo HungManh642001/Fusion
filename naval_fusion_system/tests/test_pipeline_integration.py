@@ -9,13 +9,26 @@ from pathlib import Path
 
 import pytest
 
-from src.naval_fusion.models import EvaluationMetrics, SensorType, TrackState
-from src.naval_fusion.pipeline import NavalFusionPipeline
+from naval_fusion.models import EvaluationMetrics, SensorType, TrackState
+from naval_fusion.pipeline import NavalFusionPipeline
+
+
+def _find_scenario2_dir() -> str:
+    candidates = [
+        Path("datasets/Autoferry-sensor_fusion_dataset/scenario2"),
+        Path("../datasets/Autoferry-sensor_fusion_dataset/scenario2"),
+        Path(__file__).resolve().parent.parent.parent
+        / "datasets/Autoferry-sensor_fusion_dataset/scenario2",
+    ]
+    for c in candidates:
+        if c.is_dir():
+            return str(c)
+    return str(candidates[0])
 
 
 def test_pipeline_run_scenario2() -> None:
     """Kiểm tra pipeline chạy tích hợp toàn diện trên Autoferry scenario2."""
-    scenario_dir = "datasets/Autoferry-sensor_fusion_dataset/scenario2"
+    scenario_dir = _find_scenario2_dir()
     if not os.path.exists(scenario_dir):
         pytest.skip("Thư mục Autoferry scenario2 không tồn tại")
 
@@ -50,7 +63,7 @@ def test_pipeline_run_scenario2() -> None:
 
 def test_pipeline_enabled_sensors_radar_only() -> None:
     """Kiểm tra chạy pipeline với chế độ chỉ dùng cảm biến Radar (Radar-only)."""
-    scenario_dir = "datasets/Autoferry-sensor_fusion_dataset/scenario2"
+    scenario_dir = _find_scenario2_dir()
     if not os.path.exists(scenario_dir):
         pytest.skip("Thư mục Autoferry scenario2 không tồn tại")
 
@@ -82,7 +95,7 @@ def test_pipeline_empty_detections_returns_empty_results(
 ) -> None:
     """Kiểm tra xử lý biên khi tập điểm đo rỗng."""
 
-    scenario_dir = "datasets/Autoferry-sensor_fusion_dataset/scenario2"
+    scenario_dir = _find_scenario2_dir()
     if not os.path.exists(scenario_dir):
         pytest.skip("Thư mục Autoferry scenario2 không tồn tại")
 
@@ -99,7 +112,7 @@ def test_pipeline_empty_detections_returns_empty_results(
 
 def test_pipeline_ablation_run_comparison() -> None:
     """Kiểm tra chạy so sánh đối chứng ablation giữa Radar-only và All sensors."""
-    scenario_dir = "datasets/Autoferry-sensor_fusion_dataset/scenario2"
+    scenario_dir = _find_scenario2_dir()
     if not os.path.exists(scenario_dir):
         pytest.skip("Thư mục Autoferry scenario2 không tồn tại")
 
@@ -116,12 +129,25 @@ def test_pipeline_ablation_run_comparison() -> None:
     assert metrics_all.rmse_position < 10.0
 
 
+def _get_runner_module():
+    import sys
+    proj_root = Path(__file__).resolve().parent.parent
+    if str(proj_root) not in sys.path:
+        sys.path.insert(0, str(proj_root))
+    try:
+        import run as runner
+        return runner
+    except ImportError:
+        import run_naval_fusion as runner
+        return runner
+
+
 def test_cli_runner_scenario2_eval(tmp_path: Path) -> None:
     """Kiểm tra thực thi CLI với cờ --scenario và --eval."""
-    import run_naval_fusion
+    runner = _get_runner_module()
 
     output_file = tmp_path / "report_eval.md"
-    exit_code = run_naval_fusion.main(
+    exit_code = runner.main(
         [
             "--scenario",
             "scenario2",
@@ -141,10 +167,10 @@ def test_cli_runner_scenario2_eval(tmp_path: Path) -> None:
 
 def test_cli_runner_scenario2_ablation(tmp_path: Path) -> None:
     """Kiểm tra thực thi CLI với cờ --scenario và --ablation."""
-    import run_naval_fusion
+    runner = _get_runner_module()
 
     output_file = tmp_path / "report_ablation.md"
-    exit_code = run_naval_fusion.main(
+    exit_code = runner.main(
         [
             "--scenario",
             "scenario2",

@@ -16,8 +16,13 @@ import sys
 from collections.abc import Sequence
 from pathlib import Path
 
-from src.naval_fusion.models import EvaluationMetrics
-from src.naval_fusion.pipeline import NavalFusionPipeline
+# Đảm bảo gói src được tự động thêm vào sys.path
+_SRC_DIR = Path(__file__).resolve().parent / "src"
+if str(_SRC_DIR) not in sys.path:
+    sys.path.insert(0, str(_SRC_DIR))
+
+from naval_fusion.models import EvaluationMetrics
+from naval_fusion.pipeline import NavalFusionPipeline
 
 logger = logging.getLogger("run_naval_fusion")
 
@@ -90,13 +95,18 @@ def resolve_scenario_dir(scenario_arg: str, dataset_dir: str | Path) -> Path:
     if path_direct.is_dir():
         return path_direct
 
-    path_in_dataset = Path(dataset_dir) / scenario_arg
-    if path_in_dataset.is_dir():
-        return path_in_dataset
+    candidates = [
+        Path(dataset_dir) / scenario_arg,
+        Path(__file__).resolve().parent / dataset_dir / scenario_arg,
+        Path(__file__).resolve().parent.parent / dataset_dir / scenario_arg,
+    ]
+    for c in candidates:
+        if c.is_dir():
+            return c
 
     msg = (
         f"Không tìm thấy thư mục kịch bản: '{scenario_arg}'. "
-        f"Đã thử kiểm tra: '{path_direct}' và '{path_in_dataset}'."
+        f"Đã thử kiểm tra: '{path_direct}' và {[str(c) for c in candidates]}."
     )
     logger.error(msg)
     raise FileNotFoundError(msg)
@@ -104,9 +114,19 @@ def resolve_scenario_dir(scenario_arg: str, dataset_dir: str | Path) -> Path:
 
 def discover_all_scenarios(dataset_dir: str | Path) -> list[Path]:
     """Tìm kiếm tất cả các thư mục kịch bản hợp lệ trong thư mục dataset."""
-    root = Path(dataset_dir)
-    if not root.is_dir():
-        msg = f"Thư mục tập dữ liệu không tồn tại: {root}"
+    candidates = [
+        Path(dataset_dir),
+        Path(__file__).resolve().parent / dataset_dir,
+        Path(__file__).resolve().parent.parent / dataset_dir,
+    ]
+    root: Path | None = None
+    for c in candidates:
+        if c.is_dir():
+            root = c
+            break
+
+    if root is None:
+        msg = f"Thư mục tập dữ liệu không tồn tại: {dataset_dir}"
         logger.error(msg)
         raise FileNotFoundError(msg)
 

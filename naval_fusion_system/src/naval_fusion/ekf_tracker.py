@@ -18,8 +18,8 @@ from collections.abc import Sequence
 
 import numpy as np
 
-from src.naval_fusion.coord_ned import normalize_bearing_rad
-from src.naval_fusion.models import SensorType, TrackState
+from naval_fusion.coord_ned import normalize_bearing_rad
+from naval_fusion.models import SensorType, TrackState
 
 logger = logging.getLogger(__name__)
 

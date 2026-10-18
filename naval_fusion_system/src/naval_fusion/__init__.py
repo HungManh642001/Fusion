@@ -5,15 +5,15 @@ bù chuyển động tàu mẹ trong hệ tọa độ Piren NED và xử lý c�
 (Radar, LiDAR, IR, EO).
 """
 
-from src.naval_fusion.loader import AutoferryLoader
-from src.naval_fusion.models import (
+from naval_fusion.loader import AutoferryLoader
+from naval_fusion.models import (
     Detection,
     EvaluationMetrics,
     OwnshipState,
     SensorType,
     TrackState,
 )
-from src.naval_fusion.pipeline import NavalFusionPipeline
+from naval_fusion.pipeline import NavalFusionPipeline
 
 __all__ = [
     "AutoferryLoader",
